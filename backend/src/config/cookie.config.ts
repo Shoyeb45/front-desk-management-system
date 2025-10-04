@@ -3,7 +3,8 @@ import { config } from "./app.config";
 
 export const cookieOptions: CookieOptions = {
     httpOnly: true,           // prevents JS access (XSS protection)
-    secure: config.nodeEnv === 'production', // only send over HTTPS in prod
-    sameSite: 'strict',       // CSRF protection
+    secure: true,             // MUST be true for sameSite: 'none'
+    sameSite: 'none',         // allows cross-origin cookies
     maxAge: 60 * 60 * 1000,   // 1 hour
+    domain: undefined,        // don't set domain for cross-origin
 }
