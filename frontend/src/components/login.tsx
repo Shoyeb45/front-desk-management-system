@@ -74,7 +74,7 @@ export const Login = () => {
                 setErrorMessage(apiResponse.message || "Login failed. Please try again.");
                 return;
             }
-
+            localStorage.setItem("token", apiResponse.data.token);
             const user = decodeToken(apiResponse.data.token);
             if (user?.role === "ADMIN") {
                 router.push("/admin");
