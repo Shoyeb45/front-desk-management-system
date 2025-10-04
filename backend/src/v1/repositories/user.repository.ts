@@ -10,4 +10,10 @@ export class UserRepository {
             }
         });
     }
+
+    static async getUserByEmail(email: string) {
+        return await prisma.user.findUnique({
+            where: { email }
+        })
+    }
 }

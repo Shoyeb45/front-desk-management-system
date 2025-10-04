@@ -16,9 +16,7 @@ export class ApiResponse {
       success: true,
       message,
       data,
-      meta: {
-        timestamp: new Date().toISOString(),
-      },
+      timestamp: new Date().toISOString(),
     };
 
     res.status(statusCode).json(response);
