@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,11 +10,151 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
+enum Role {
+  ADMIN
+  STAFF
+}
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum QueueType {
+  NORMAL
+  EMERGENCY
+}
+
+enum CurrentStatusType {
+  WAITING
+  WITH_DOCTOR
+  DONE
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+// Models
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([email])
+  @@index([role])
+}
 
 model Doctor {
-  id String @id @default(uuid())
-  name String 
-  createdAt   DateTime
-  updatedAt   DateTime
+  id             String @id @default(uuid()) @db.Uuid
+  name           String
+  email          String @unique
+  phone          String
+  location       String
+  specialization String
+  gender         Gender
+  // availabilityType  AvailabilityType @map("availability_type")
+
+  // Relations
+  doctorAvailability DoctorAvailability[]
+  appointments       Appointment[]
+  patientQueues      PatientQueue[]
+
+  @@index([email])
+  @@index([specialization])
+  // @@index([availabilityType])
+  @@map("doctor")
+}
+
+model Patient {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String?  @unique
+  phone     String?
+  age       Int
+  gender    Gender
+  address   String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  appointments  Appointment[]
+  patientQueues PatientQueue[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([createdAt])
+  @@map("patient")
+}
+
+model PatientQueue {
+  id            String            @id @default(uuid()) @db.Uuid
+  patientId     String            @map("patient_id") @db.Uuid
+  arrivalTime   DateTime          @map("arrival_time") @db.Time(6)
+  currentStatus CurrentStatusType @map("current_status")
+  queueType     QueueType         @map("queue_type")
+  doctorId      String?           @map("doctor_id") @db.Uuid
+  createdAt     DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime          @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor  Doctor? @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([currentStatus])
+  @@index([queueType])
+  @@index([createdAt])
+  @@map("patient_queue")
+}
+
+model DoctorAvailability {
+  id            String    @id @default(uuid()) @db.Uuid
+  doctorId      String    @map("doctor_id") @db.Uuid
+  dayOfWeek     DayOfWeek @map("day_of_week")
+  availableFrom DateTime  @map("available_from") @db.Time(6)
+  availableTo   DateTime  @map("available_to") @db.Time(6)
+  // isEmergency   Boolean   @map("is_emergency") @default(false)
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, dayOfWeek, availableFrom, availableTo])
+  @@index([doctorId])
+  @@index([dayOfWeek])
+  // @@index([isEmergency])
+  @@map("doctor_availability")
+}
+
+model Appointment {
+  id              String   @id @default(uuid()) @db.Uuid
+  doctorId        String   @map("doctor_id") @db.Uuid
+  patientId       String   @map("patient_id") @db.Uuid
+  appointmentDate DateTime @map("appointment_date") @db.Timestamptz(6)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+
+  // Relations
+  doctor  Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId])
+  @@index([patientId])
+  @@index([appointmentDate])
+  @@index([doctorId, appointmentDate])
+  @@map("appointment")
 }
