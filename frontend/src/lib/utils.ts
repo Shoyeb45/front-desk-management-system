@@ -14,13 +14,16 @@ interface JwtPayload {
 
 export function decodeToken(token: string) {
     try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        return {
-            id: decoded.id,
-            role: decoded.role,
-        };
+        const payload = token.split('.')[1];
+        const decodedPayload = atob(payload);
+        return JSON.parse(decodedPayload);
     } catch (error) {
-        console.error("Failed to decode token:", error);
+        console.error('Token decode error:', error);
         return null;
     }
+}
+
+
+export function getToken() {
+  return localStorage.getItem("token");
 }

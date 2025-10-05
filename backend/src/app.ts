@@ -6,13 +6,16 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { config } from "./config/app.config";
 
-// declare global {
-//   namespace Express {
-//     interface Request {
-//       user?: AuthUser;
-//     }
-//   }
-// }
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string,
+        role: "ADMIN" | "STAFF"
+      };
+    }
+  }
+}
 
 
 

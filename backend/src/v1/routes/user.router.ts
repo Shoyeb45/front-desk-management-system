@@ -10,4 +10,7 @@ const router = Router();
 router.route("/")
     .post(validate(ZUserCreate), asyncHandler(UserController.createUser));
 
+router.route("/")
+    .get(asyncHandler(UserController.getUsers));
+    
 export default router;

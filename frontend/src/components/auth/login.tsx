@@ -1,11 +1,11 @@
 "use client";
-import { use, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Alert, AlertDescription } from "../ui/alert";
 import { appConfig } from "@/config";
 import { ApiErrorResponse, ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
@@ -18,9 +18,28 @@ export const Login = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            const user = decodeToken(token);
+
+            if (user) {
+                // Redirect based on role
+                if (user.role === 'ADMIN') {
+                    router.push('/admin');
+                } else if (user.role === 'STAFF') {
+                    router.push('/staff');
+                }
+            } else {
+                // Token is invalid, remove it
+                localStorage.removeItem('token');
+            }
+        }
+    }, [router]);
     async function handleLogin(e: React.FormEvent) {
         e.preventDefault();
-        
+
         if (isLoading) return;
 
         setErrorMessage("");
@@ -38,7 +57,7 @@ export const Login = () => {
 
         try {
             setIsLoading(true);
-    
+
             const response = await fetch(
                 `${appConfig.backendUrl}/api/v1/auth/login`,
                 {
@@ -62,14 +81,14 @@ export const Login = () => {
                 }
 
                 setErrorMessage(
-                    errorData?.message || 
+                    errorData?.message ||
                     `Login failed: ${response.status} ${response.statusText}`
                 );
                 return;
             }
 
             const apiResponse: ApiSuccessReponse<LoginData> = await response.json();
-            
+
             if (!apiResponse.success) {
                 setErrorMessage(apiResponse.message || "Login failed. Please try again.");
                 return;
@@ -81,12 +100,12 @@ export const Login = () => {
             } else {
                 router.push("/staff");
             }
-            
+
             router.refresh();
-            
+
         } catch (error) {
             console.error("Login error:", error);
-            
+
             if (error instanceof TypeError && error.message.includes('fetch')) {
                 setErrorMessage(
                     "Unable to reach the server. Please check your connection."
@@ -149,8 +168,8 @@ export const Login = () => {
                 >
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="ADMIN" id="admin" disabled={isLoading} />
-                        <Label 
-                            htmlFor="admin" 
+                        <Label
+                            htmlFor="admin"
                             className={`font-normal ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                         >
                             Admin
@@ -158,8 +177,8 @@ export const Login = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="STAFF" id="staff" disabled={isLoading} />
-                        <Label 
-                            htmlFor="staff" 
+                        <Label
+                            htmlFor="staff"
                             className={`font-normal ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                         >
                             Staff
@@ -168,8 +187,8 @@ export const Login = () => {
                 </RadioGroup>
             </div>
 
-            <Button 
-                type="submit" 
+            <Button
+                type="submit"
                 disabled={isLoading}
                 className="w-full"
             >
