@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Alert, AlertDescription } from "../ui/alert";
 import { appConfig } from "@/config";
 import { ApiErrorResponse, ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
