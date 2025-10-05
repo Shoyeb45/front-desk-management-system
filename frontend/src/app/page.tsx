@@ -1,13 +1,8 @@
 import { Login } from "@/components/auth/login";
-import { decodeToken } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Home() {
-  
-
   return (
-    <div className="">
+    <div className="min-h-screen bg-background flex">
       <Login />
     </div>
   );
