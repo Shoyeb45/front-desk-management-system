@@ -3,21 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmployeeItem } from "./EmployeeItem";
 import { getEmployees } from "./api";
-import { Employee } from "./types";
+import { Employee, EmployeeListProps } from "./types";
 
-interface EmployeeListProps {
-    role: "doctor" | "staff";
-    searchTerm: string;
-}
 
-export function EmployeeList({ role, searchTerm }: EmployeeListProps) {
+
+export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListProps) {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchEmployees();
-    }, [role]);
+    }, [role, refreshTrigger]);
 
     const fetchEmployees = async () => {
         try {
@@ -89,7 +86,7 @@ export function EmployeeList({ role, searchTerm }: EmployeeListProps) {
     return (
         <div className="space-y-4">
             {filteredEmployees.map((employee) => (
-                <EmployeeItem key={employee.id} employee={employee} role={role} />
+                <EmployeeItem key={employee.id} employee={employee} role={role} id={employee.id} onEmployeeDeleted={fetchEmployees}/>
             ))}
         </div>
     );

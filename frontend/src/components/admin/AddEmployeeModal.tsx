@@ -5,16 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createEmployee } from "./api";
-import { Employee } from "./types";
+import { AddEmployeeModalProps, Employee } from "./types";
+import { toast } from "sonner";
 
-interface AddEmployeeModalProps {
-    role: "doctor" | "staff";
-    isOpen: boolean;
-    onClose: () => void;
-}
 
-export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProps) {
-    console.log(`Modal role ${role}`);
+
+export function AddEmployeeModal({ role, isOpen, onClose, onEmployeeAdded }: AddEmployeeModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -23,7 +19,8 @@ export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProp
                     <DialogTitle>Add New {role === "doctor" ? "Doctor" : "Staff"}</DialogTitle>
                 </DialogHeader>
 
-                {role === "doctor" ? <DoctorForm onClose={onClose} /> : <StaffForm onClose={onClose} />}
+                {role === "doctor" ?
+                    <DoctorForm onClose={onClose} onEmployeeAdded={onEmployeeAdded} /> : <StaffForm onClose={onClose} onEmployeeAdded={onEmployeeAdded} />}
 
 
             </DialogContent>
@@ -34,15 +31,16 @@ export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProp
 
 
 
-function DoctorForm({ onClose }: {
-    onClose: () => void
+function DoctorForm({ onClose, onEmployeeAdded }: {
+    onClose: () => void,
+    onEmployeeAdded?: () => void
 }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         location: "",
-        gender: "MALE" as "MALE" | "FEMALE", // Update type to be more specific
+        gender: "MALE" as "MALE" | "FEMALE", 
         specialization: ""
     });
     const [loading, setLoading] = useState(false);
@@ -56,15 +54,17 @@ function DoctorForm({ onClose }: {
         try {
             const newEmployee: Employee = await createEmployee("doctor", formData);
             console.log("Employee created:", newEmployee);
+            toast.success(`Successfully created doctor named ${newEmployee.name}.`);
             onClose();
-            setFormData({ 
-                name: "", 
-                email: "", 
-                location: "", 
-                specialization: "", 
-                gender: "MALE", 
-                phone: "" 
+            setFormData({
+                name: "",
+                email: "",
+                location: "",
+                specialization: "",
+                gender: "MALE",
+                phone: ""
             });
+            onEmployeeAdded?.();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create doctor");
         } finally {
@@ -187,8 +187,9 @@ function DoctorForm({ onClose }: {
 }
 
 
-function StaffForm({ onClose }: {
-    onClose: () => void
+function StaffForm({ onClose, onEmployeeAdded }: {
+    onClose: () => void,
+    onEmployeeAdded?: () => void
 }) {
     const [formData, setFormData] = useState({
         name: "",
@@ -209,7 +210,9 @@ function StaffForm({ onClose }: {
         try {
             const newEmployee: Employee = await createEmployee("staff", formData);
             console.log("Employee created:", newEmployee);
+            toast.success(`Successfully created staff named ${newEmployee.name}`);
             onClose();
+            onEmployeeAdded?.();
             setFormData({ name: "", email: "", password: "", role: "STAFF" });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create employee");

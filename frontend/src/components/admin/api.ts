@@ -4,7 +4,7 @@ import { ApiErrorResponse, ApiSuccessReponse } from "@/types/apiTypes";
 import { Employee } from "./types";
 
 export async function getEmployees(role: "doctor" | "staff"): Promise<Employee[]> {
-    const apiUrl = role === "doctor" 
+    const apiUrl = role === "doctor"
         ? `${appConfig.backendUrl}/api/v1/doctor`
         : `${appConfig.backendUrl}/api/v1/user?role=STAFF`;
 
@@ -23,7 +23,7 @@ export async function getEmployees(role: "doctor" | "staff"): Promise<Employee[]
         } catch {
             // If JSON parsing fails, use status text
         }
-        
+
         const errorMessage = errorData?.message || `Failed to fetch ${role}s: ${response.status} ${response.statusText}`;
         throw new Error(errorMessage);
     }
@@ -38,10 +38,10 @@ export async function getEmployees(role: "doctor" | "staff"): Promise<Employee[]
 }
 
 export async function createEmployee(
-    role: "doctor" | "staff", 
+    role: "doctor" | "staff",
     employeeData: Omit<Employee, 'id'>
 ): Promise<Employee> {
-    const apiUrl = role === "doctor" 
+    const apiUrl = role === "doctor"
         ? `${appConfig.backendUrl}/api/v1/doctor`
         : `${appConfig.backendUrl}/api/v1/user`;
 
@@ -62,16 +62,53 @@ export async function createEmployee(
         } catch {
             // If JSON parsing fails, use status text
         }
-        
+
         const errorMessage = errorData?.message || `Failed to create ${role}: ${response.status} ${response.statusText}`;
         throw new Error(errorMessage);
     }
 
-    const apiResponse: ApiSuccessReponse<{ data: Employee,  }> = await response.json();
+    const apiResponse: ApiSuccessReponse< Employee > = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+    console.log(apiResponse);
+    return apiResponse.data;
+}
+
+
+export async function deleteEmployee(role: "doctor" | "staff", id: string) {
+    if (!id) {
+        return;
+    }
+    const api = `${appConfig.backendUrl}/api/v1/${(role === "doctor" ? "doctor" : "user")}/${id}`;
+    const response = await fetch(api, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    })
+
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch {
+            // If JSON parsing fails, use status text
+        }
+
+        const errorMessage = errorData?.message || `Failed to delete ${role}: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse< Employee > = await response.json();
 
     if (!apiResponse.success) {
         throw new Error(apiResponse.message);
     }
 
-    return apiResponse.data.data;
+    return apiResponse.data;
+
 }
