@@ -13,4 +13,6 @@ router.route("/")
 router.route("/")
     .get(authenticateUser, roleRequired("ADMIN"), asyncHandler(DoctorController.getDoctors));
     
+router.route("/:id")
+    .delete(authenticateUser, roleRequired("ADMIN"), asyncHandler(DoctorController.deleteDoctor));
 export default router;

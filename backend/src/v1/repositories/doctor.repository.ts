@@ -14,4 +14,10 @@ export class DoctorRepository {
             id: true, name: true, email: true   
         }});
     }
+
+    static async deleteById(id: string) {
+        return await prisma.doctor.delete({
+            where: { id }
+        });
+    }
 }

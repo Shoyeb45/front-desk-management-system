@@ -14,4 +14,9 @@ export class UserController {
         
         await UserService.getUsers(role, res)
     }
+
+    static async deleteUser(req: Request, res: Response) {
+        const id = req.params.id;
+        await UserService.deleteUser(id, res);
+    }
 }

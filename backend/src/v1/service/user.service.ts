@@ -5,6 +5,7 @@ import { UserRepository } from "../repositories/user.repository";
 import { TUserCreate } from "../types/user.type";
 import { prisma } from "../../database/prisma";
 import { ApiError } from "../../utils/ApiError";
+import { email } from "zod";
 
 export class UserService {
     static async createUser(data: TUserCreate, res: Response) {
@@ -26,4 +27,15 @@ export class UserService {
     }
 
 
+    static async deleteUser(id: string, res: Response) {
+        if (!id || !id.trim()) {
+            throw new ApiError("No id found to delete the user.");
+        }
+        const data = await UserRepository.deleteById(id);
+        ApiResponse.success(res, {
+            name: data.name,
+            id: data.id,
+            email: data.email
+        }, "Successfully deleted user.")
+    }
 }
