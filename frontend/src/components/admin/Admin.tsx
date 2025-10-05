@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ManagementCard } from "./ManagementCard";
-import { TabsContent } from "@radix-ui/react-tabs";
 
 export function Admin() {
     const [tab, setTab] = useState<"doctor" | "staff">("staff");

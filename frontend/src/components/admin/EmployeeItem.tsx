@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Mail, User } from "lucide-react";
+import { MoreVertical, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -16,10 +16,9 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Employee, EmployeeItemProps } from "./types";
+import {  EmployeeItemProps } from "./types";
 import { deleteEmployee } from "./api";
 import { toast } from "sonner";
 
@@ -28,6 +27,8 @@ import { toast } from "sonner";
 export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: EmployeeItemProps) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
     const getInitials = (name: string) => {
         return name
@@ -89,7 +90,10 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onSelect={(e) => {
+                                    e.preventDefault();
+                                    setIsEditDialogOpen(true);
+                                }}>
                                     Edit {role === "doctor" ? "Doctor" : "Staff"}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -106,7 +110,7 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                     </div>
                 </div>
 
-                {/* Delete Confirmation Dialog */}
+                {/* Delete modal */}
                 <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -117,6 +121,7 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                                 <strong>{employee.name}</strong>.
                             </DialogDescription>
                         </DialogHeader>
+
                         <DialogFooter>
                             <Button
                                 variant="outline"
@@ -133,6 +138,18 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                                 {isDeleting ? "Deleting..." : "Delete"}
                             </Button>
                         </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Edit modal */}
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                    <DialogContent>
+
+                        <DialogHeader>
+                            <DialogTitle>
+                                Edit {(role === "doctor" ? " doctor ": " staff member ") + employee.name} 
+                            </DialogTitle>
+                        </DialogHeader>
                     </DialogContent>
                 </Dialog>
             </CardContent>

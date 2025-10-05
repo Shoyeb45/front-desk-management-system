@@ -9,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { appConfig } from "@/config";
-import { ApiErrorResponse, ApiSuccessReponse, LoginData } from "@/types/apiTypes";
+import {  ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
 
 export const Login = () => {
@@ -77,14 +77,16 @@ export const Login = () => {
             setTimeout(() => {
                 router.push(user?.role === "ADMIN" ? "/admin" : "/staff");
             }, 800);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Login error:", error);
             let message = "An unexpected error occurred. Please try again.";
 
-            if (error.name === "TimeoutError") {
-                message = "Request timed out. Please try again.";
-            } else if (error.message?.includes("fetch")) {
-                message = "Unable to reach the server. Please check your connection.";
+            if (error instanceof Error) {
+                if (error.name === "TimeoutError") {
+                    message = "Request timed out. Please try again.";
+                } else if (error.message?.includes("fetch")) {
+                    message = "Unable to reach the server. Please check your connection.";
+                }
             }
 
             toast.error(message);
@@ -95,7 +97,7 @@ export const Login = () => {
 
     return (
         <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto p-4 md:p-8">
-            {/* Left: Quote / Motivation */}
+            
             <div className="flex-1 flex items-center justify-center p-6 md:p-12">
                 <div className="max-w-md text-center md:text-left">
                     <blockquote className="text-2xl font-medium text-primary mb-6">
@@ -111,9 +113,8 @@ export const Login = () => {
                 </div>
             </div>
 
-            {/* Right: Login Form */}
             <div className="flex-1 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md shadow-lg">
+                <Card className="w-full max-w-md shadow-lg bg-transparent"     >
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold text-center">
                             Sign in to your account
