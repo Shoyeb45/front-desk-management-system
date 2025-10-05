@@ -4,7 +4,7 @@ import { TUserCreate } from "../types/user.type";
 export class UserRepository {
     static async create(data: TUserCreate) {
         return await prisma.user.create({
-            data, 
+            data,
             select: {
                 id: true, name: true, role: true, email: true
             }
@@ -15,5 +15,13 @@ export class UserRepository {
         return await prisma.user.findUnique({
             where: { email }
         })
+    }
+
+    static async getUsers(where: {
+        role?: "ADMIN" | "STAFF" | undefined
+    }) {
+        return await prisma.user.findMany({
+            where
+        });
     }
 }

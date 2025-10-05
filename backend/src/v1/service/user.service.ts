@@ -3,6 +3,8 @@ import { ApiResponse } from "../../utils/ApiResponse";
 import { hashPassword } from "../../utils/helper";
 import { UserRepository } from "../repositories/user.repository";
 import { TUserCreate } from "../types/user.type";
+import { prisma } from "../../database/prisma";
+import { ApiError } from "../../utils/ApiError";
 
 export class UserService {
     static async createUser(data: TUserCreate, res: Response) {
@@ -12,4 +14,16 @@ export class UserService {
         ApiResponse.success(res, user, "User created successfully", 201);
         return;
     }
+
+
+    static async getUsers(role: "ADMIN" | "STAFF" | undefined, res: Response) {
+        if (role && (role != "STAFF" && role != "ADMIN")) {
+            throw new ApiError("Only STAFF and ADMIN are valid role.");
+        }
+
+        const data = await UserRepository.getUsers({ role: role });
+        ApiResponse.success(res, { users: data.map((d) => ({ id: d.id, email: d.email, name: d.name, role: d.role })) }, "Successfully fetched users.");
+    }
+
+
 }
