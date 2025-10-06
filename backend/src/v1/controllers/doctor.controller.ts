@@ -13,7 +13,17 @@ export class DoctorController {
     }
 
     static async deleteDoctor(req: Request, res: Response) {
-        const id = req.params.id;
+        const id = req.params.id as string;
         await DoctorService.deleteDoctor(id, res);
+    }
+
+    static async getDoctor(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await DoctorService.getDoctor(id, res);
+    }
+
+    static async editDoctor(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await DoctorService.editDoctor(id, req.body, res);
     }
 }

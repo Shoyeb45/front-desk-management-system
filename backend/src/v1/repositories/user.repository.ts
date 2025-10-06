@@ -1,5 +1,5 @@
 import { prisma } from "../../database/prisma";
-import { TUserCreate } from "../types/user.type";
+import { TUserCreate, TUserEdit } from "../types/user.type";
 
 export class UserRepository {
     static async create(data: TUserCreate) {
@@ -28,6 +28,19 @@ export class UserRepository {
     static async deleteById(id: string) {
         return await prisma.user.delete({
             where: { id }
+        });
+    }
+
+    static async getUserById(id: string) {
+        return await prisma.user.findUnique({
+            where: { id }
+        });
+    }
+
+    static async editUserById(id: string, data: TUserEdit) {
+        return await prisma.user.update({
+            where: { id },
+            data
         });
     }
 }

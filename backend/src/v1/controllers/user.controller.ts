@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { UserService } from "../service/user.service";
-import { ApiError } from "../../utils/ApiError";
-import { ApiResponse } from "../../utils/ApiResponse";
 
 export class UserController {
     static async createUser(req: Request, res: Response) {
@@ -18,5 +16,15 @@ export class UserController {
     static async deleteUser(req: Request, res: Response) {
         const id = req.params.id;
         await UserService.deleteUser(id, res);
+    }
+
+    static async getUser(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await UserService.getUser(id, res);
+    }
+
+    static async editUser(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await UserService.editUser(id, req.body, res);
     }
 }
