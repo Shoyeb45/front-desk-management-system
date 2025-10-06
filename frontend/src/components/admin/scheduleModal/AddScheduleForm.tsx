@@ -24,7 +24,7 @@ export default function AddScheduleForm({
     loading,
 }: AddScheduleFormProps) {
     return (
-        <Card className="border-2">
+        <Card className="border-2 mr-2">
             <CardContent className="pt-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                     <Plus className="w-4 h-4" />

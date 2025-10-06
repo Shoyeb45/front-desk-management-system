@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { createEmployee } from "./api";
 import { AddEmployeeModalProps, Employee, Gender } from "@/types/adminTypes";
 import { toast } from "sonner";
+import { Location, Specialization } from "./Specialization";
 
 
 
@@ -72,6 +73,12 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
         }
     };
 
+    const handleSpecializationChange = (specialization: string) => {
+        setFormData({
+            ...formData, specialization
+        });
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
@@ -127,27 +134,14 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter location"
-                />
+                <Location formData={formData} handleChange={(location: string) => {
+                    setFormData({ ...formData, location })
+                }} disabled={loading}/>
             </div>
 
+
             <div className="space-y-2">
-                <Label htmlFor="specialization">Specialization</Label>
-                <Input
-                    id="specialization"
-                    name="specialization"
-                    value={formData.specialization}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter specialization"
-                />
+                <Specialization formData={formData} handleChange={handleSpecializationChange} disabled={loading} />
             </div>
 
             <div className="space-y-2">
@@ -309,3 +303,5 @@ function StaffForm({ onClose, onEmployeeAdded }: {
         </form>
     )
 }
+
+
