@@ -83,7 +83,7 @@ export const Login = () => {
 
             if (error instanceof Error) {
                 if (error.name === "TimeoutError") {
-                    message = "Request timed out. Please try again.";
+                    message = "Server is waking up. Please try again.";
                 } else if (error.message?.includes("fetch")) {
                     message = "Unable to reach the server. Please check your connection.";
                 }
