@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Mail, Pencil } from "lucide-react";
+import { MoreVertical, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -9,31 +9,21 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-
-import { deleteEmployee, editEmployee, fetchUserDetail } from "./api";
-import { toast } from "sonner";
 import { useState } from "react";
-import { EmployeeItemProps } from "./types";
+import { EmployeeItemProps } from "@/types/adminTypes";
 import { EditModal } from "./EditModal";
 import { UserDeleteModal } from "./UserDeleteModal";
 import { getInitials } from "@/lib/utils";
+import ScheduleModal  from "./scheduleModal/index";
 
 
-
-export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: EmployeeItemProps) {
+export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItemProps) {
     // state variable for tracking delete modal
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
     // state variable for tracking edit modal
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    // schedule modal for doctor
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
     return (
         <Card className="hover:shadow-md transition-shadow">
@@ -77,6 +67,15 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                                 }}>
                                     Edit {role === "doctor" ? "Doctor" : "Staff"}
                                 </DropdownMenuItem>
+
+                                {/* Doctor specific menu */}
+                                {role === "doctor" && <DropdownMenuItem onSelect={(e) => {
+                                    e.preventDefault();
+                                    setIsScheduleModalOpen(true);
+                                }}>
+                                    View Schedule
+                                </DropdownMenuItem>}
+
                                 <DropdownMenuItem
                                     className="text-destructive"
                                     onSelect={(e) => {
@@ -108,6 +107,15 @@ export function EmployeeItem({ employee, role, id, onEmployeeDeleted }: Employee
                     employee={employee}
                     onEmployeeEdited={onEmployeeDeleted}
                 />
+
+                {/* Schedule modal for doctor */}
+                {role === "doctor" && 
+                    <ScheduleModal 
+                        isOpen={isScheduleModalOpen}
+                        onOpenChange={setIsScheduleModalOpen}
+                        doctor={employee}
+                    />
+                }
 
             </CardContent>
         </Card>

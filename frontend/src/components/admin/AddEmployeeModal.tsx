@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createEmployee } from "./api";
-import { AddEmployeeModalProps, Employee, Gender } from "./types";
+import { AddEmployeeModalProps, Employee, Gender } from "@/types/adminTypes";
 import { toast } from "sonner";
 
 

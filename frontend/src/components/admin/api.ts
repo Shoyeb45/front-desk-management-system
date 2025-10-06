@@ -1,7 +1,7 @@
 import { appConfig } from "@/config";
 import { getToken } from "@/lib/utils";
 import { ApiErrorResponse, ApiSuccessReponse } from "@/types/apiTypes";
-import { Employee, Gender } from "./types";
+import { DoctorAvailability, Employee, Gender } from "@/types/adminTypes";
 
 export async function getEmployees(role: "doctor" | "staff"): Promise<Employee[]> {
     const apiUrl = role === "doctor"
@@ -185,3 +185,54 @@ export async function editEmployee(role: "doctor" | "staff", id: string, formDat
     return apiResponse.data;
     
 }
+
+
+export const scheduleApi = {
+    async getSchedule(doctorId: string): Promise<DoctorAvailability[]> {
+        const response = await fetch(`${appConfig.backendUrl}/api/v1/doctor-availability/doctor/${doctorId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) throw new Error('Failed to fetch schedule');
+        const data = await response.json();
+        return data.data.availability;
+    },
+
+    async createSchedule(doctorId: string, slots: Omit<DoctorAvailability, 'id'>[]): Promise<void> {
+        const response = await fetch(`${appConfig.backendUrl}/api/v1/doctor-availability`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                doctorId,
+                availability: slots
+            })
+        });
+        if (!response.ok) throw new Error('Failed to create schedule');
+    },
+
+    async updateSlot(slotId: string, data: Partial<Omit<DoctorAvailability, 'id'>>): Promise<void> {
+        const response = await fetch(`${appConfig.backendUrl}/api/v1/doctor-availability/${slotId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('Failed to update slot');
+    },
+
+    async deleteSlot(slotId: string): Promise<void> {
+        const response = await fetch(`${appConfig.backendUrl}/api/v1/doctor-availability/${slotId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) throw new Error('Failed to delete slot');
+    }
+};

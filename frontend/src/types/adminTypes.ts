@@ -1,5 +1,5 @@
 export enum Gender {
-    MALE = "MALE",  FEMALE = "FEMALE"
+    MALE = "MALE", FEMALE = "FEMALE"
 }
 
 export interface Employee {
@@ -10,13 +10,12 @@ export interface Employee {
     phone?: string;
     location?: string;
     specialization?: string,
-    doctorAvailability?: DoctorAvailability 
 }
 
 export interface EmployeeItemProps {
     employee: Employee;
     role: "doctor" | "staff";
-    id: string;
+    id?: string;
     onEmployeeDeleted?: () => void;
 }
 
@@ -34,23 +33,24 @@ export interface EmployeeListProps {
     refreshTrigger: number;
 }
 
-export interface EditData  {
+export interface EditData {
     name: string,
     email: string
 }
 
 export enum DayOfWeek {
-    "MONDAY",
-    "TUESDAY",
-    "WEDNESDAY",
-    "THURSDAY",
-    "FRIDAY",
-    "SATURDAY",
-    "SUNDAY"
+    MONDAY = "MONDAY",
+    TUESDAY = "TUESDAY",
+    WEDNESDAY = "WEDNESDAY",
+    THURSDAY = "THURSDAY",
+    FRIDAY = "FRIDAY",
+    SATURDAY = "SATURDAY",
+    SUNDAY = "SUNDAY"
 }
 
 export interface DoctorAvailability {
+    id: string;
     dayOfWeek: DayOfWeek;
-    availableFrom: Date,
-    availableTod: Date,
+    availableFrom: string;
+    availableTo: string;
 }

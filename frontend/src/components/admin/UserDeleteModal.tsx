@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { deleteEmployee } from "./api";
 import { toast } from "sonner";
-import { Employee } from "./types";
+import { Employee } from "@/types/adminTypes";
 
 
 export function UserDeleteModal({ isDeleteDialogOpen, setIsDeleteDialogOpen, role, employee, onEmployeeDeleted}: {

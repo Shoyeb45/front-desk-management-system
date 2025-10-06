@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Employee, EmployeeItemProps, Gender } from "./types";
+import { Employee, Gender } from "@/types/adminTypes";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
@@ -53,7 +53,6 @@ export function EditModal({
                             phone: data?.phone ?? "",
                             location: data?.location ?? "",
                             specialization: data?.specialization ?? "",
-                            doctorAvailability: data?.doctorAvailability,
                         });
                     }
                 })
@@ -205,7 +204,7 @@ export function EditModal({
                     </div>
                 </div>
 
-                <DialogFooter className="gap-2 sm:gap-0">
+                <DialogFooter className="flex gap-2 sm:gap-2">
                     <Button
                         variant="outline"
                         onClick={handleCancel}

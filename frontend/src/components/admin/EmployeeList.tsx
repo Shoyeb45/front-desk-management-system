@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmployeeItem } from "./EmployeeItem";
 import { getEmployees } from "./api";
-import { Employee, EmployeeListProps } from "./types";
+import { Employee, EmployeeListProps } from "@/types/adminTypes";
 
 export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListProps) {
     const [employees, setEmployees] = useState<Employee[]>([]);

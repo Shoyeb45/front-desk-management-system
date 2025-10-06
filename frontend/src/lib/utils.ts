@@ -1,3 +1,4 @@
+import { DayOfWeek } from "@/types/adminTypes";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -25,6 +26,19 @@ export function decodeToken(token: string) {
         return null;
     }
 }
+
+export const getDayColor = (day: DayOfWeek): string => {
+    const colors = {
+        MONDAY: "bg-blue-100 text-blue-700",
+        TUESDAY: "bg-green-100 text-green-700",
+        WEDNESDAY: "bg-yellow-100 text-yellow-700",
+        THURSDAY: "bg-purple-100 text-purple-700",
+        FRIDAY: "bg-pink-100 text-pink-700",
+        SATURDAY: "bg-orange-100 text-orange-700",
+        SUNDAY: "bg-red-100 text-red-700"
+    };
+    return colors[day] || "bg-gray-100 text-gray-700";
+};
 
 
 export function getToken() {
