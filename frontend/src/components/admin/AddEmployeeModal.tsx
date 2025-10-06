@@ -5,16 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createEmployee } from "./api";
-import { Employee } from "./types";
+import { AddEmployeeModalProps, Employee, Gender } from "@/types/adminTypes";
+import { toast } from "sonner";
+import { Location, Specialization } from "./Specialization";
 
-interface AddEmployeeModalProps {
-    role: "doctor" | "staff";
-    isOpen: boolean;
-    onClose: () => void;
-}
 
-export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProps) {
-    console.log(`Modal role ${role}`);
+
+export function AddEmployeeModal({ role, isOpen, onClose, onEmployeeAdded }: AddEmployeeModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -23,7 +20,8 @@ export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProp
                     <DialogTitle>Add New {role === "doctor" ? "Doctor" : "Staff"}</DialogTitle>
                 </DialogHeader>
 
-                {role === "doctor" ? <DoctorForm onClose={onClose} /> : <StaffForm onClose={onClose} />}
+                {role === "doctor" ?
+                    <DoctorForm onClose={onClose} onEmployeeAdded={onEmployeeAdded} /> : <StaffForm onClose={onClose} onEmployeeAdded={onEmployeeAdded} />}
 
 
             </DialogContent>
@@ -34,15 +32,16 @@ export function AddEmployeeModal({ role, isOpen, onClose }: AddEmployeeModalProp
 
 
 
-function DoctorForm({ onClose }: {
-    onClose: () => void
+function DoctorForm({ onClose, onEmployeeAdded }: {
+    onClose: () => void,
+    onEmployeeAdded?: () => void
 }) {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<Omit<Employee, "id">>({
         name: "",
         email: "",
         phone: "",
         location: "",
-        gender: "MALE" as "MALE" | "FEMALE", // Update type to be more specific
+        gender: Gender.MALE,
         specialization: ""
     });
     const [loading, setLoading] = useState(false);
@@ -56,21 +55,29 @@ function DoctorForm({ onClose }: {
         try {
             const newEmployee: Employee = await createEmployee("doctor", formData);
             console.log("Employee created:", newEmployee);
+            toast.success(`Successfully created doctor named ${newEmployee.name}.`);
             onClose();
-            setFormData({ 
-                name: "", 
-                email: "", 
-                location: "", 
-                specialization: "", 
-                gender: "MALE", 
-                phone: "" 
+            setFormData({
+                name: "",
+                email: "",
+                location: "",
+                specialization: "",
+                gender: Gender.MALE,
+                phone: ""
             });
+            onEmployeeAdded?.();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create doctor");
         } finally {
             setLoading(false);
         }
     };
+
+    const handleSpecializationChange = (specialization: string) => {
+        setFormData({
+            ...formData, specialization
+        });
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -82,7 +89,7 @@ function DoctorForm({ onClose }: {
     const handleGenderChange = (value: "MALE" | "FEMALE") => {
         setFormData({
             ...formData,
-            gender: value
+            gender: value === "MALE" ? Gender.MALE : Gender.FEMALE
         });
     };
 
@@ -127,32 +134,19 @@ function DoctorForm({ onClose }: {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter location"
-                />
+                <Location formData={formData} handleChange={(location: string) => {
+                    setFormData({ ...formData, location })
+                }} disabled={loading}/>
             </div>
 
+
             <div className="space-y-2">
-                <Label htmlFor="specialization">Specialization</Label>
-                <Input
-                    id="specialization"
-                    name="specialization"
-                    value={formData.specialization}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter specialization"
-                />
+                <Specialization formData={formData} handleChange={handleSpecializationChange} disabled={loading} />
             </div>
 
             <div className="space-y-2">
                 <Label htmlFor="gender">Gender</Label>
-                <Select value={formData.gender} onValueChange={handleGenderChange}>
+                <Select value={formData.gender === Gender.FEMALE ? "FEMALE" : "MALE"} onValueChange={handleGenderChange}>
                     <SelectTrigger id="gender">
                         <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
@@ -187,19 +181,25 @@ function DoctorForm({ onClose }: {
 }
 
 
-function StaffForm({ onClose }: {
-    onClose: () => void
+function StaffForm({ onClose, onEmployeeAdded }: {
+    onClose: () => void,
+    onEmployeeAdded?: () => void
 }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
-        role: "STAFF"
+        gender: Gender.MALE
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-
+    const handleGenderChange = (value: "MALE" | "FEMALE") => {
+        setFormData({
+            ...formData,
+            gender: value === "MALE" ? Gender.MALE : Gender.FEMALE
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -209,8 +209,10 @@ function StaffForm({ onClose }: {
         try {
             const newEmployee: Employee = await createEmployee("staff", formData);
             console.log("Employee created:", newEmployee);
+            toast.success(`Successfully created staff named ${newEmployee.name}`);
             onClose();
-            setFormData({ name: "", email: "", password: "", role: "STAFF" });
+            onEmployeeAdded?.();
+            setFormData({ name: "", email: "", password: "", gender: Gender.MALE });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create employee");
         } finally {
@@ -266,6 +268,19 @@ function StaffForm({ onClose }: {
                 />
             </div>
 
+            <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select value={formData.gender === Gender.FEMALE ? "FEMALE" : "MALE"} onValueChange={handleGenderChange}>
+                    <SelectTrigger id="gender">
+                        <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
             {error && (
                 <div className="text-sm text-destructive">
                     {error}
@@ -288,3 +303,5 @@ function StaffForm({ onClose }: {
         </form>
     )
 }
+
+

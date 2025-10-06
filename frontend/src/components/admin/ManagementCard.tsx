@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
@@ -13,13 +12,19 @@ interface ManagementCardProps {
 export function ManagementCard({ role }: ManagementCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-
+    // This variable to propogate the changes like adding the new employee to the child components
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const handleAddEmployee = () => {
         setIsModalOpen(true);
     };
 
     const handleModalClose = () => {
         setIsModalOpen(false);
+    };
+
+    const handleEmployeeAdded = () => {
+        // Increment to trigger refresh
+        setRefreshTrigger(prev => prev + 1);
     };
 
     return (
@@ -49,12 +54,17 @@ export function ManagementCard({ role }: ManagementCardProps) {
                 </div>
             </div>
 
-            <EmployeeList role={role} searchTerm={searchTerm} />
+            <EmployeeList
+                role={role}
+                searchTerm={searchTerm}
+                refreshTrigger={refreshTrigger}
+            />
 
-            <AddEmployeeModal 
-                role={role} 
-                isOpen={isModalOpen} 
-                onClose={handleModalClose} 
+            <AddEmployeeModal
+                role={role}
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                onEmployeeAdded={handleEmployeeAdded}
             />
         </div>
     );

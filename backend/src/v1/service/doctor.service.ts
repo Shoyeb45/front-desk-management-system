@@ -1,8 +1,10 @@
 import { Response } from "express";
-import { TCreateDoctor } from "../types/doctor.type";
+import { TCreateDoctor, TEditDoctor } from "../types/doctor.type";
 import { DoctorRepository } from "../repositories/doctor.repository";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
+import { HTTP_STATUS } from "../../utils/httpCodes";
+import z from "zod";
 
 export class DoctorService {
     static async createDoctor(doctorData: TCreateDoctor, res: Response) {
@@ -16,5 +18,34 @@ export class DoctorService {
     static async getDoctors(res: Response) {
         const doctors = await DoctorRepository.getAllDoctor();
         ApiResponse.success(res, { users: doctors }, "Successfully fetched all the doctors.", 201);
+    }
+
+    static async deleteDoctor(id: string, res: Response) {
+        if (!id || id.trim() === "") {
+            throw new ApiError("No id found to delete the doctor.")
+        }
+        const data = await DoctorRepository.deleteById(id);
+        ApiResponse.success(res, data, "Deleted doctor successfully.", HTTP_STATUS.OK);
+    }
+    
+    static async getDoctor(id: string, res: Response) {
+        if (!id || id.trim() === "") {
+            throw new ApiError("No id found to get the doctor.")
+        }
+        const data = await DoctorRepository.getCompleteDoctorById(id);
+        
+        ApiResponse.success(res, data, "Successfully fetched the data of the doctor.", HTTP_STATUS.OK);
+    }
+    
+    static async editDoctor(id: string, data: TEditDoctor, res: Response) {
+        if (!id || id.trim() === "") {
+            throw new ApiError("No id found to get the doctor.")
+        }
+
+        const updatedData = await DoctorRepository.edit(id, data); 
+        if (!updatedData) {
+            throw new ApiError("Failed to update the doctor.");
+        }
+        ApiResponse.success(res, updatedData, "Successfully updated doctor.", HTTP_STATUS.OK);
     }
 }

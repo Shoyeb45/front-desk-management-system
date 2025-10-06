@@ -1,25 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmployeeItem } from "./EmployeeItem";
 import { getEmployees } from "./api";
-import { Employee } from "./types";
+import { Employee, EmployeeListProps } from "@/types/adminTypes";
 
-interface EmployeeListProps {
-    role: "doctor" | "staff";
-    searchTerm: string;
-}
-
-export function EmployeeList({ role, searchTerm }: EmployeeListProps) {
+export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListProps) {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchEmployees();
-    }, [role]);
-
-    const fetchEmployees = async () => {
+    const fetchEmployees = useCallback(async () => {
         try {
             setIsLoading(true);
             setError(null);
@@ -31,7 +22,11 @@ export function EmployeeList({ role, searchTerm }: EmployeeListProps) {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [role]); // Only recreate when role changes
+
+    useEffect(() => {
+        fetchEmployees();
+    }, [fetchEmployees, refreshTrigger]); // Now safe to include
 
     const filteredEmployees = employees.filter(employee =>
         employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,7 +84,13 @@ export function EmployeeList({ role, searchTerm }: EmployeeListProps) {
     return (
         <div className="space-y-4">
             {filteredEmployees.map((employee) => (
-                <EmployeeItem key={employee.id} employee={employee} role={role} />
+                <EmployeeItem 
+                    key={employee.id} 
+                    employee={employee} 
+                    role={role} 
+                    id={employee.id} 
+                    onEmployeeDeleted={fetchEmployees}
+                />
             ))}
         </div>
     );

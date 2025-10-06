@@ -24,17 +24,21 @@ export function ProtectedRoute({
                 const token = localStorage.getItem('token');
 
                 if (!token) {
-                    router.push(`/?redirect=${pathname}`);
                     toast.error('Please log in to continue');
+                    setTimeout(() => {
+                        router.push(`/?redirect=${pathname}`);
+                    }, 1000);
                     return;
                 }
 
                 const user = decodeToken(token);
 
                 if (!user) {
-                    localStorage.removeItem('token');
-                    router.push('/');
                     toast.error('Invalid session. Please log in again.');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        router.push('/');
+                    }, 1000);
                     return;
                 }
 
@@ -42,16 +46,20 @@ export function ProtectedRoute({
                 const currentTime = Date.now() / 1000;
                 if (user.exp && user.exp < currentTime) {
                     localStorage.removeItem('token');
-                    router.push('/');
                     toast.error('Session expired. Please log in again.');
+                    setTimeout(() => {
+                        router.push('/');
+                    }, 1000);
                     return;
                 }
 
                 if (user.role !== allowedRole) {
                     // Redirect to correct dashboard
                     const correctPath = user.role === 'ADMIN' ? '/admin' : '/staff';
-                    router.push(correctPath);
                     toast.error('You do not have permission to access this page.');
+                    setTimeout(() => {
+                        router.push(correctPath);
+                    }, 1000);
                     return;
                 }
 
@@ -59,8 +67,10 @@ export function ProtectedRoute({
             } catch (error) {
                 console.error('Auth check error:', error);
                 localStorage.removeItem('token');
-                router.push('/');
                 toast.error('An error occurred. Please try logging in again.');
+                setTimeout(() => {
+                    router.push('/');
+                }, 1000);
             } finally {
                 setIsLoading(false);
             }
