@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Pencil } from "lucide-react";
+import { Specialization, Location } from "./Specialization";
 
 export function EditModal({
     open,
@@ -92,6 +93,12 @@ export function EditModal({
         setIsEditing(false);
     };
 
+    const handleSpecializationChange = (specialization: string) => {
+        setFormData({
+            ...formData, specialization
+        });
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-md sm:max-w-lg p-6">
@@ -154,31 +161,13 @@ export function EditModal({
                             </div>
 
                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="location" className="text-right">
-                                    Location
-                                </Label>
-                                <Input
-                                    id="location"
-                                    name="location"
-                                    value={formData.location || ""}
-                                    onChange={handleChange}
-                                    disabled={!isEditing}
-                                    className="col-span-3"
-                                />
+                                <Location formData={formData} handleChange={(location: string) => {
+                                    setFormData({ ...formData, location })
+                                }} disabled={!isEditing} />
                             </div>
 
                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="specialization" className="text-right">
-                                    Specialization
-                                </Label>
-                                <Input
-                                    id="specialization"
-                                    name="specialization"
-                                    value={formData.specialization || ""}
-                                    onChange={handleChange}
-                                    disabled={!isEditing}
-                                    className="col-span-3"
-                                />
+                                <Specialization formData={formData} handleChange={handleSpecializationChange} disabled={!isEditing} />
                             </div>
                         </>
                     )}

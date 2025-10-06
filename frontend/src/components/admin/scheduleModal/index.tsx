@@ -28,6 +28,13 @@ const validateTimeRange = (from: string, to: string): boolean => {
     return toHour * 60 + toMin > fromHour * 60 + fromMin;
 };
 
+const doctorName = (name: string) => {
+    if (name.startsWith("Dr") || name.startsWith("dr") || name.startsWith("doctor") || name.startsWith("Doctor")) {
+        return name;
+    }
+    return `Dr ${name}`;
+}
+
 export default function ScheduleModal({ isOpen, onOpenChange, doctor }: ScheduleModalProps) {
     const [schedules, setSchedules] = useState<DoctorAvailability[]>([]);
     const [loading, setLoading] = useState(false);
@@ -143,14 +150,13 @@ export default function ScheduleModal({ isOpen, onOpenChange, doctor }: Schedule
         return acc;
     }, {} as Record<string, DoctorAvailability[]>);
 
-    console.log(groupedSchedules);
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Calendar className="w-5 h-5" />
-                        Schedule for Dr. {doctor.name}
+                        Schedule for {doctorName(doctor.name)}
                     </DialogTitle>
                     <DialogDescription>
                         {doctor.specialization && (
@@ -165,17 +171,6 @@ export default function ScheduleModal({ isOpen, onOpenChange, doctor }: Schedule
                         <LoadingState />
                     ) : (
                         <>
-                            <ScheduleList
-                                groupedSchedules={groupedSchedules}
-                                editingId={editingId}
-                                formData={formData}
-                                onEdit={startEdit}
-                                onCancelEdit={cancelEdit}
-                                onUpdate={handleUpdateSlot}
-                                onDelete={handleDeleteSlot}
-                                onFormDataChange={setFormData}
-                                loading={loading}
-                            />
 
                             {showAddForm && (
                                 <AddScheduleForm
@@ -189,6 +184,17 @@ export default function ScheduleModal({ isOpen, onOpenChange, doctor }: Schedule
                                     loading={loading}
                                 />
                             )}
+                            <ScheduleList
+                                groupedSchedules={groupedSchedules}
+                                editingId={editingId}
+                                formData={formData}
+                                onEdit={startEdit}
+                                onCancelEdit={cancelEdit}
+                                onUpdate={handleUpdateSlot}
+                                onDelete={handleDeleteSlot}
+                                onFormDataChange={setFormData}
+                                loading={loading}
+                            />
                         </>
                     )}
                 </div>
