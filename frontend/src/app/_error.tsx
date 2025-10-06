@@ -1,11 +1,10 @@
-// app/_error.tsx (for App Router)
 'use client';
 
 export default function Error({
-  error,
+  _error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  _error: Error & { digest?: string };
   reset: () => void;
 }) {
   return (

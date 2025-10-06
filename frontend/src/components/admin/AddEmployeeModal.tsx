@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createEmployee } from "./api";
-import { AddEmployeeModalProps, Employee } from "./types";
+import { AddEmployeeModalProps, Employee, Gender } from "./types";
 import { toast } from "sonner";
 
 
@@ -35,12 +35,12 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
     onClose: () => void,
     onEmployeeAdded?: () => void
 }) {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<Omit<Employee, "id">>({
         name: "",
         email: "",
         phone: "",
         location: "",
-        gender: "MALE" as "MALE" | "FEMALE", 
+        gender: Gender.MALE,
         specialization: ""
     });
     const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
                 email: "",
                 location: "",
                 specialization: "",
-                gender: "MALE",
+                gender: Gender.MALE,
                 phone: ""
             });
             onEmployeeAdded?.();
@@ -82,7 +82,7 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
     const handleGenderChange = (value: "MALE" | "FEMALE") => {
         setFormData({
             ...formData,
-            gender: value
+            gender: value === "MALE" ? Gender.MALE : Gender.FEMALE
         });
     };
 
@@ -152,7 +152,7 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
 
             <div className="space-y-2">
                 <Label htmlFor="gender">Gender</Label>
-                <Select value={formData.gender} onValueChange={handleGenderChange}>
+                <Select value={formData.gender === Gender.FEMALE ? "FEMALE" : "MALE"} onValueChange={handleGenderChange}>
                     <SelectTrigger id="gender">
                         <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
@@ -195,12 +195,17 @@ function StaffForm({ onClose, onEmployeeAdded }: {
         name: "",
         email: "",
         password: "",
-        role: "STAFF"
+        gender: Gender.MALE
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-
+    const handleGenderChange = (value: "MALE" | "FEMALE") => {
+        setFormData({
+            ...formData,
+            gender: value === "MALE" ? Gender.MALE : Gender.FEMALE
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -213,7 +218,7 @@ function StaffForm({ onClose, onEmployeeAdded }: {
             toast.success(`Successfully created staff named ${newEmployee.name}`);
             onClose();
             onEmployeeAdded?.();
-            setFormData({ name: "", email: "", password: "", role: "STAFF" });
+            setFormData({ name: "", email: "", password: "", gender: Gender.MALE });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create employee");
         } finally {
@@ -267,6 +272,19 @@ function StaffForm({ onClose, onEmployeeAdded }: {
                     required
                     placeholder="Enter password"
                 />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select value={formData.gender === Gender.FEMALE ? "FEMALE" : "MALE"} onValueChange={handleGenderChange}>
+                    <SelectTrigger id="gender">
+                        <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             {error && (

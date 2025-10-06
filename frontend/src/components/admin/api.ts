@@ -1,7 +1,7 @@
 import { appConfig } from "@/config";
 import { getToken } from "@/lib/utils";
 import { ApiErrorResponse, ApiSuccessReponse } from "@/types/apiTypes";
-import { Employee } from "./types";
+import { Employee, Gender } from "./types";
 
 export async function getEmployees(role: "doctor" | "staff"): Promise<Employee[]> {
     const apiUrl = role === "doctor"
@@ -52,7 +52,7 @@ export async function createEmployee(
             "Authorization": `Bearer ${getToken()}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(employeeData)
+        body: JSON.stringify({...employeeData, gender: employeeData.gender === Gender.MALE ? "MALE": "FEMALE"})
     });
 
     if (!response.ok) {
@@ -67,7 +67,7 @@ export async function createEmployee(
         throw new Error(errorMessage);
     }
 
-    const apiResponse: ApiSuccessReponse< Employee > = await response.json();
+    const apiResponse: ApiSuccessReponse<Employee> = await response.json();
 
     if (!apiResponse.success) {
         throw new Error(apiResponse.message);
@@ -103,7 +103,7 @@ export async function deleteEmployee(role: "doctor" | "staff", id: string) {
         throw new Error(errorMessage);
     }
 
-    const apiResponse: ApiSuccessReponse< Employee > = await response.json();
+    const apiResponse: ApiSuccessReponse<Employee> = await response.json();
 
     if (!apiResponse.success) {
         throw new Error(apiResponse.message);
@@ -111,4 +111,77 @@ export async function deleteEmployee(role: "doctor" | "staff", id: string) {
 
     return apiResponse.data;
 
+}
+
+export async function fetchUserDetail(role: "doctor" | "staff", id: string) {
+    if (!id) {
+        return;
+    }
+    const api = `${appConfig.backendUrl}/api/v1/${(role === "doctor" ? "doctor" : "user")}/${id}`;
+    const response = await fetch(api, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    })
+
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch {
+            // If JSON parsing fails, use status text
+        }
+
+        const errorMessage = errorData?.message || `Failed to delete ${role}: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<Employee> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
+
+export async function editEmployee(role: "doctor" | "staff", id: string, formData: Omit<Employee, "id">) {
+    if (!id) {
+        return;
+    }
+    const api = `${appConfig.backendUrl}/api/v1/${(role === "doctor" ? "doctor" : "user")}/${id}`;
+    const response = await fetch(api, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ...formData, gender: formData.gender === Gender.MALE ? "MALE": "FEMALE"})
+    });
+    
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch {
+            // If JSON parsing fails, use status text
+        }
+    
+        const errorMessage = errorData?.message || `Failed to delete ${role}: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+    
+    const apiResponse: ApiSuccessReponse<Employee> = await response.json();
+    
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+    
+    return apiResponse.data;
+    
 }
