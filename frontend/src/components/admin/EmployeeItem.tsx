@@ -51,7 +51,7 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                             variant={role === "doctor" ? "default" : "secondary"}
                             className="py-1"
                         >
-                            {role === "doctor" ? "Doctor" : "Staff"}
+                            {role === "doctor" ? employee?.specialization ?? "Doctor" : "Staff"}
                         </Badge>
 
                         <DropdownMenu>

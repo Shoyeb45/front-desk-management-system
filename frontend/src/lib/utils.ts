@@ -1,4 +1,4 @@
-import { DayOfWeek } from "@/types/adminTypes";
+import { DayOfWeek, DecodedUser } from "@/types/adminTypes";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -16,7 +16,10 @@ export const getInitials = (name: string) => {
 
 
 
-export function decodeToken(token: string) {
+export function decodeToken(token: string | null): DecodedUser | null {
+    if (!token) {
+        return null;
+    }
     try {
         const payload = token.split('.')[1];
         const decodedPayload = atob(payload);
@@ -43,4 +46,11 @@ export const getDayColor = (day: DayOfWeek): string => {
 
 export function getToken() {
   return localStorage.getItem("token");
+}
+
+export const getFormattedDoctorName = (name: string) => {
+    if (name.startsWith("Dr") || name.startsWith("dr") || name.startsWith("doctor") || name.startsWith("Doctor")) {
+        return name;
+    }
+    return `Dr ${name}`;
 }

@@ -10,6 +10,7 @@ export interface Employee {
     phone?: string;
     location?: string;
     specialization?: string,
+    role?: "ADMIN" | "STAFF";
 }
 
 export interface EmployeeItemProps {
@@ -53,4 +54,10 @@ export interface DoctorAvailability {
     dayOfWeek: DayOfWeek;
     availableFrom: string;
     availableTo: string;
+}
+
+export interface DecodedUser {
+    id: string;
+    role: "ADMIN" | "STAFF",
+    exp: number
 }

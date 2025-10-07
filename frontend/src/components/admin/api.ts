@@ -45,6 +45,12 @@ export async function createEmployee(
         ? `${appConfig.backendUrl}/api/v1/doctor`
         : `${appConfig.backendUrl}/api/v1/user`;
 
+
+    const formData = { ...employeeData, gender: employeeData.gender === Gender.MALE ? "MALE" : "FEMALE"  };
+    if (role === "staff") {
+        formData.role = "STAFF";
+    }
+
     const response = await fetch(apiUrl, {
         method: "POST",
         credentials: "include",
@@ -52,7 +58,7 @@ export async function createEmployee(
             "Authorization": `Bearer ${getToken()}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({...employeeData, gender: employeeData.gender === Gender.MALE ? "MALE": "FEMALE"})
+        body: JSON.stringify({ ...formData })
     });
 
     if (!response.ok) {
@@ -161,9 +167,9 @@ export async function editEmployee(role: "doctor" | "staff", id: string, formDat
             "Authorization": `Bearer ${getToken()}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ...formData, gender: formData.gender === Gender.MALE ? "MALE": "FEMALE"})
+        body: JSON.stringify({ ...formData, gender: formData.gender === Gender.MALE ? "MALE" : "FEMALE" })
     });
-    
+
     if (!response.ok) {
         let errorData: ApiErrorResponse | null = null;
         try {
@@ -171,19 +177,19 @@ export async function editEmployee(role: "doctor" | "staff", id: string, formDat
         } catch {
             // If JSON parsing fails, use status text
         }
-    
+
         const errorMessage = errorData?.message || `Failed to delete ${role}: ${response.status} ${response.statusText}`;
         throw new Error(errorMessage);
     }
-    
+
     const apiResponse: ApiSuccessReponse<Employee> = await response.json();
-    
+
     if (!apiResponse.success) {
         throw new Error(apiResponse.message);
     }
-    
+
     return apiResponse.data;
-    
+
 }
 
 

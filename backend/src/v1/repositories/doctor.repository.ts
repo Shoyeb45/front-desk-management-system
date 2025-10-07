@@ -8,7 +8,6 @@ export class DoctorRepository {
         });
     } 
 
-
     static async getDoctorById(id: string) {
         return prisma.doctor.findUnique({
             where: { id }
@@ -17,28 +16,13 @@ export class DoctorRepository {
 
     static async getAllDoctor() {
         return await prisma.doctor.findMany({select: {
-            id: true, name: true, email: true   
+            id: true, name: true, email: true, specialization: true
         }});
     }
 
     static async deleteById(id: string) {
         return await prisma.doctor.delete({
             where: { id }
-        });
-    }
-
-    static async getCompleteDoctorById(id: string) {
-        return await prisma.doctor.findUnique({
-            where: { id },
-            select: {
-                id: true, name: true, email: true, phone: true, location: true, specialization: true, gender: true, doctorAvailability: {
-                    select: {
-                        dayOfWeek: true,
-                        availableFrom: true,
-                        availableTo: true
-                    }
-                }
-            }
         });
     }
 

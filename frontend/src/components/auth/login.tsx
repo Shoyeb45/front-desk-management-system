@@ -72,7 +72,7 @@ export const Login = () => {
             localStorage.setItem("token", apiResponse.data.token);
             const user = decodeToken(apiResponse.data.token);
 
-            toast.success(`Welcome back, ${user?.name || "Admin"}!`);
+            toast.success(`Welcome back, ${user?.role === "ADMIN" ? "Admin": "Staff"}!`);
 
             setTimeout(() => {
                 router.push(user?.role === "ADMIN" ? "/admin" : "/staff");

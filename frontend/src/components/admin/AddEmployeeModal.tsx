@@ -136,7 +136,7 @@ function DoctorForm({ onClose, onEmployeeAdded }: {
             <div className="space-y-2">
                 <Location formData={formData} handleChange={(location: string) => {
                     setFormData({ ...formData, location })
-                }} disabled={loading}/>
+                }} disabled={loading} />
             </div>
 
 
