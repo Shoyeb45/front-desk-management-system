@@ -18,6 +18,7 @@ export interface Patient {
     email?: string | undefined;
     phone?: string | undefined;
     address?: string | undefined;
+    isNewPatientNeeded?: boolean
 };
 
 export interface TQueue {
