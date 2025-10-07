@@ -8,6 +8,7 @@ export const ZCreatePatient = z.object({
     age: z.number(),
     gender: z.enum(Gender),
     address: z.string().optional(),
+    isNewPatientNeeded: z.boolean().default(false)
 });
 export const ZCreateQueue = z.object({
     arrivalTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Use HH:MM"),

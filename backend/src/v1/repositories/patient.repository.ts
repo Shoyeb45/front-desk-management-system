@@ -1,13 +1,18 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/prisma";
+import { removeKeys } from "../../utils/helper";
 import { TCreatePatient } from "../types/patient-queue.types";
 
 export class PatientRepository {
-    static async create(data: TCreatePatient) {
+    static async create(patientData: TCreatePatient) {
+        const data = removeKeys(patientData, ["isNewPatientNeeded"]);
         return prisma.patient.create({
-            data
+            data: {
+                ...data
+            } as Prisma.PatientUncheckedCreateInput
         });
     }
-
+    
     static async getByEmail(email: string) {
         return await prisma.patient.findFirst({
             where: {
@@ -18,8 +23,9 @@ export class PatientRepository {
             },
         });
     }
-
-    static async update(id: string, data: TCreatePatient) {
+    
+    static async update(id: string, patientData: TCreatePatient) {
+        const data = removeKeys(patientData, ["isNewPatientNeeded"]);
         return await prisma.patient.update({
             where: { id },
             data

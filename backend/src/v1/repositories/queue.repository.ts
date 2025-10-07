@@ -35,7 +35,7 @@ export class QueueRepository {
                 id: true, arrivalTime: true, queueType: true, currentStatus: true, updatedAt: true,
                 patient: {
                     select: {
-                        id: true, name: true, email: true
+                        id: true, name: true, email: true, age: true, gender: true
                     }
 
                 },
@@ -66,7 +66,7 @@ export class QueueRepository {
                 id: true, arrivalTime: true, queueType: true, currentStatus: true, updatedAt: true,
                 patient: {
                     select: {
-                        id: true, name: true, email: true
+                        id: true, name: true, email: true, age: true, gender: true
                     }
 
                 },

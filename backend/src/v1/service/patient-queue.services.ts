@@ -10,6 +10,7 @@ import { addMinutes } from 'date-fns';
 import { CurrentStatusType, QueueType } from "@prisma/client";
 import z from "zod";
 import { ZUuid } from "../types/shared.types";
+import { removeKeys } from "../../utils/helper";
 
 export class PatientQueueService {
     static async createQueue(queueData: TCreateQueuePatient, res: Response) {
@@ -25,10 +26,14 @@ export class PatientQueueService {
             logger.info("Patient doesn't existing creating new one.");
             patient = await PatientRepository.create(queueData.patient);
         } else {
-            logger.info("Patient exists, updating with new data.");
-            patient = await PatientRepository.update(patient.id, queueData.patient);
+            if (queueData.patient.isNewPatientNeeded) {
+                logger.info("Staff request for new patient, creating new one.");
+                patient = await PatientRepository.create(queueData.patient);
+            } else {
+                logger.info("Patient exists, updating with new data.");
+                patient = await PatientRepository.update(patient.id, queueData.patient);
+            }
         }
-        logger.info("Creating a patient..");
         if (!patient) {
             throw new ApiError("Failed to add patient into queue, please try once again.");
         }
