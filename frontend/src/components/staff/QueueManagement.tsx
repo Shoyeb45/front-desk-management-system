@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
-import { CurrentStatusType } from "@/types/staffTypes";
+import { CurrentStatusType, QueueListType } from "@/types/staffTypes";
 import { Label } from "../ui/label";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { AddNewPatient } from "./AddNewPatient";
+import { getPatientQueue } from "./api";
+import { PatientList } from "./PatientList";
 
 export function QueueManagement() {
     return <Queue />;
@@ -15,6 +17,7 @@ export function QueueManagement() {
 export function Queue() {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [filter, setFilter] = useState<CurrentStatusType>();
+    const [filterTime, setFilterTime] = useState<"TODAY" | "PAST">("TODAY");
 
     return (
         <div className="space-y-6">
@@ -33,6 +36,20 @@ export function Queue() {
                             <SelectItem value={CurrentStatusType.WAITING}>Waiting</SelectItem>
                             <SelectItem value={CurrentStatusType.WITH_DOCTOR}>With Doctor</SelectItem>
                             <SelectItem value={CurrentStatusType.DONE}>Done</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="w-full sm:w-auto space-y-1.5">
+                    <Label htmlFor="filter" className="text-xs font-medium">
+                        Patient List Time
+                    </Label>
+                    <Select value={filterTime} onValueChange={(value: "TODAY" | "PAST") => setFilterTime(value)}>
+                        <SelectTrigger id="filter" className="w-full sm:w-[180px]">
+                            <SelectValue placeholder="All time filter" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value={"TODAY"}>Today's Patients</SelectItem>
+                            <SelectItem value={"PAST"}>Past Patients</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -55,12 +72,40 @@ export function Queue() {
             </div>
 
             {/* Patient List (placeholder) */}
-            <PatientList />
+            <PatientList filter={filterTime} searchTerm={searchTerm} filterStatus={filter}/>
         </div>
     );
 }
 
-// Keep your existing PatientList component
-export function PatientList() {
-    return <div className="min-h-[400px]"> {/* Your list goes here */}</div>;
-}
+// // Keep your existing PatientList component
+// export function PatientList({ filter, searchTerm, filterStatus }: {
+//     filter: "TODAY" | "PAST",
+//     searchTerm: string,
+//     filterStatus: CurrentStatusType | undefined
+// }) {
+//     const [patientQueue, setPatientQueue] = useState<QueueListType[]>([]);
+//     const [error, setError] = useState<string | null>(null);
+//     const [loading, setLoading] = useState<boolean>(false);
+//     const [filteredPatientList, setFilteredPatientList] = useState<QueueListType[]>([]);
+
+//     const fetchPatientList = useCallback(async () => {
+//         try {
+//             setLoading(true);
+//             const data = await getPatientQueue(filter);
+//         } catch(err) {
+//             setError(err instanceof Error ? err.message : "Failed to load to patients.")
+//         } finally {
+//             setLoading(false);
+//         }   
+//     }, [filter]);
+
+//     useEffect(() => {
+//         fetchPatientList();
+//     }, []);
+
+//     return (<>
+//         <div>
+
+//         </div>
+//     </>)
+// }

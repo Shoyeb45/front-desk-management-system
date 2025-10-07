@@ -36,7 +36,14 @@ export interface QueueCreate {
 export interface QueueListType extends Omit<TQueue, "doctorId"> {
     id: string;
     createdAt: Date;
-    doctor: Employee;
+    doctor?: Employee;
     patient: Patient;
+    expectedTime?: Date
 }
 
+
+
+export interface UpdateQueueData {
+    currentStatus?: CurrentStatusType,
+    queueType: QueueType
+};
