@@ -23,7 +23,12 @@ export const ZCreateQueuePatient = z.object({
     queue: ZCreateQueue
 });
 
+export const ZPatientQueueEdit = z.object({
+    currentStatus: z.enum(CurrentStatusType).optional(),
+    queueType: z.enum(QueueType).optional()
+});
 
 export type TCreateQueuePatient = z.infer<typeof ZCreateQueuePatient>;
 export type TCreatePatient = z.infer<typeof ZCreatePatient>;
 export type TCreateQueue = z.infer<typeof ZCreateQueue>;
+export type TPatientQueueEdit = z.infer<typeof ZPatientQueueEdit>;

@@ -15,4 +15,14 @@ export class PatientQueueController {
         const filter = req.query.filter as string;
         await PatientQueueService.getPatientQueueList(filter, res);
     }
+
+    static async deletePatientFromTheQueue(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await PatientQueueService.deletePatientQueue(id, res);
+    }
+
+    static async editPatientQueue(req: Request, res: Response) {
+        const id = req.params.id as string;
+        await PatientQueueService.editPatientQueue(id, req.body, res);
+    }
 }

@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/prisma";
-import { TCreateQueue } from "../types/patient-queue.types";
+import { TCreateQueue, TPatientQueueEdit } from "../types/patient-queue.types";
 import { getTodaysDateAttachedWithTime } from "../../utils/helper";
 
 export class QueueRepository {
@@ -32,7 +32,7 @@ export class QueueRepository {
                 },
             },
             select: {
-                id: true, arrivalTime: true, queueType: true, currentStatus: true,
+                id: true, arrivalTime: true, queueType: true, currentStatus: true, updatedAt: true,
                 patient: {
                     select: {
                         id: true, name: true, email: true
@@ -63,7 +63,7 @@ export class QueueRepository {
                 },
             },
             select: {
-                id: true, arrivalTime: true, queueType: true, currentStatus: true,
+                id: true, arrivalTime: true, queueType: true, currentStatus: true, updatedAt: true,
                 patient: {
                     select: {
                         id: true, name: true, email: true
@@ -83,4 +83,37 @@ export class QueueRepository {
         });
 
     }
-}
+
+
+    static async deleteById(id: string) {
+        return await prisma.patientQueue.delete({ where: {id } });
+    }
+
+    static async existById(id: string) {
+        return await prisma.patientQueue.findFirst({ where: { id }, select: { id: true, doctorId: true } });
+    }
+
+    static async updateById(id: string, data: TPatientQueueEdit) {
+        return await prisma.patientQueue.update({
+            where: { id },
+            data
+        });
+    }
+
+    static async getTodaysWithDoctorPatient(doctorId: string) {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        return await prisma.patientQueue.findMany({
+            where: { 
+                currentStatus: "WITH_DOCTOR",
+                createdAt: {
+                    gte: todayStart
+                },
+                doctorId
+            }, select: {
+                id: true
+            }
+        })
+    }
+}   
