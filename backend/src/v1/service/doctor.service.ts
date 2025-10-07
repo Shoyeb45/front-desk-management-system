@@ -32,7 +32,7 @@ export class DoctorService {
         if (!id || id.trim() === "") {
             throw new ApiError("No id found to get the doctor.")
         }
-        const data = await DoctorRepository.getCompleteDoctorById(id);
+        const data = await DoctorRepository.getDoctorById(id);
         
         ApiResponse.success(res, data, "Successfully fetched the data of the doctor.", HTTP_STATUS.OK);
     }

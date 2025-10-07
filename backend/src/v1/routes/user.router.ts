@@ -14,7 +14,6 @@ router.route("/")
 router.route("/")
     .get(asyncHandler(UserController.getUsers));
 
-
 router.route("/:id")
     .delete(authenticateUser, asyncHandler(UserController.deleteUser));
 

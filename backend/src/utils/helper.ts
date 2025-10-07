@@ -38,3 +38,19 @@ export function removeKeys<T extends Record<string, any>>(obj: T, keysToRemove: 
   }
   return newObj;
 }
+
+export function getTodaysDateAttachedWithTime(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  const now = new Date(); // today
+  const combinedDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes,
+    0 // seconds
+  );
+
+  return combinedDate.toISOString();
+}
