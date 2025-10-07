@@ -6,30 +6,41 @@ import { Label } from "../ui/label";
 import { Pencil } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Employee, Gender } from "@/types/adminTypes";
 import { getEmployees } from "../admin/api";
 import { getFormattedDoctorName } from "@/lib/utils";
 import { addPatientInQueue, getPatientData } from "./api";
 import { toast } from "sonner";
+import { Switch } from "../ui/switch";
 
-
-
-export function AddNewPatientModal({ open, onOpenChange }: {
-    open: boolean,
-    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>
+export function AddNewPatientModal({
+    open,
+    onOpenChange,
+    setUpdateList
+}: {
+    open: boolean;
+    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+    setUpdateList: React.Dispatch<React.SetStateAction<number>>;
 }) {
+    // Get current time in "HH:mm" format
+    const getCurrentTime = () => {
+        const now = new Date();
+        return now.toTimeString().slice(0, 5); // "HH:mm"
+    };
+
     const [patientData, setPatientData] = useState<Patient>({
         name: "",
         age: 0,
         email: "",
         address: "",
         phone: "",
-        gender: Gender.MALE
+        gender: Gender.MALE,
+        isNewPatientNeeded: false
     });
+
     const [queueData, setQueueData] = useState<TQueue>({
-        arrivalTime: "09:00",
+        arrivalTime: getCurrentTime(), // ✅ Default to current time
         currentStatus: CurrentStatusType.WAITING,
         queueType: QueueType.NORMAL
     });
@@ -49,29 +60,48 @@ export function AddNewPatientModal({ open, onOpenChange }: {
     useEffect(() => {
         if (open) {
             fetchEmployees();
+            // Reset form when modal opens
+            setPatientData({
+                name: "",
+                age: 0,
+                email: "",
+                address: "",
+                phone: "",
+                gender: Gender.MALE,
+                isNewPatientNeeded: false
+            });
+            setQueueData({
+                arrivalTime: getCurrentTime(),
+                currentStatus: CurrentStatusType.WAITING,
+                queueType: QueueType.NORMAL
+            });
+            setError(null);
+            setExistingPatientFound(false);
+            setIsPatientDataEditing(false);
         }
-    }, [open]);
+    }, [open, fetchEmployees]);
 
     // Debounced email lookup
     const checkPatientByEmail = useCallback(async (email: string) => {
-        if (!email || !/\S+@\S+\.\S+/.test(email)) return;
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            setExistingPatientFound(false);
+            return;
+        }
 
         setIsCheckingEmail(true);
         setError(null);
         try {
-        
             const data = await getPatientData(email);
-
-            if (!data) {
+            if (data) {
+                setPatientData(prev => ({
+                    ...data,
+                    email, // Ensure email is preserved
+                    isNewPatientNeeded: prev.isNewPatientNeeded // Preserve switch state
+                }));
+                setExistingPatientFound(true);
+            } else {
                 setExistingPatientFound(false);
-                return;
             }
-
-            setPatientData(_prev => ({
-                ...data,
-                email 
-            }));
-            setExistingPatientFound(true);
         } catch (err) {
             console.error("Failed to fetch patient:", err);
             setError("Failed to check patient email.");
@@ -81,13 +111,27 @@ export function AddNewPatientModal({ open, onOpenChange }: {
         }
     }, []);
 
-    // Debounce email lookup
+    // Handle email change IMMEDIATELY (reset fields)
+    const handleEmailChange = (email: string) => {
+        setPatientData(prev => ({
+            ...prev,
+            email,
+            // Reset other fields immediately when email changes
+            name: "",
+            age: 0,
+            address: "",
+            phone: "",
+            gender: Gender.MALE
+        }));
+        setExistingPatientFound(false);
+        setIsPatientDataEditing(false);
+    };
+
+    // Debounce the API call
     useEffect(() => {
         const timer = setTimeout(() => {
             if (patientData.email) {
                 checkPatientByEmail(patientData.email);
-            } else {
-                setExistingPatientFound(false);
             }
         }, 500);
 
@@ -107,28 +151,15 @@ export function AddNewPatientModal({ open, onOpenChange }: {
         try {
             await addPatientInQueue(formData);
             toast.success("Patient added to the queue.");
+            setUpdateList(prev => prev + 1);
             onOpenChange(false);
-            // Reset form
-            setPatientData({
-                name: "",
-                age: 0,
-                email: "",
-                address: "",
-                phone: "",
-                gender: Gender.MALE
-            });
-            setQueueData({
-                arrivalTime: "09:00",
-                currentStatus: CurrentStatusType.WAITING,
-                queueType: QueueType.NORMAL
-            });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to add patient to queue.");
         } finally {
             setIsAdding(false);
         }
     };
-    
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -142,7 +173,6 @@ export function AddNewPatientModal({ open, onOpenChange }: {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                
                     <div className="space-y-2">
                         <Label htmlFor="email">Email *</Label>
                         <div className="relative">
@@ -151,10 +181,7 @@ export function AddNewPatientModal({ open, onOpenChange }: {
                                 name="email"
                                 type="email"
                                 value={patientData.email}
-                                onChange={e => {
-                                    setPatientData(prev => ({ ...prev, email: e.target.value }));
-                                    setExistingPatientFound(false); // reset status when typing
-                                }}
+                                onChange={e => handleEmailChange(e.target.value)} // ✅ Reset on change
                                 placeholder="Enter patient email"
                                 required
                                 className={existingPatientFound ? "border-green-500 bg-green-50" : ""}
@@ -177,17 +204,20 @@ export function AddNewPatientModal({ open, onOpenChange }: {
 
                     {/* Patient Info Section */}
                     <div className="border rounded-lg p-4 bg-muted/20">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                             <h3 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wide">
                                 Patient Information
                             </h3>
-                            {existingPatientFound && <div onClick={() => {
-                                console.log("I clicked");
-                                
-                                    setIsPatientDataEditing(true);
-                                }}>
-                                <Pencil className="w-4 h-4"/>
-                            </div>}
+                            {existingPatientFound && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setIsPatientDataEditing(!isPatientDataEditing)}
+                                >
+                                    <Pencil className="w-4 h-4" />
+                                </Button>
+                            )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -259,6 +289,19 @@ export function AddNewPatientModal({ open, onOpenChange }: {
                                     disabled={existingPatientFound && !isPatientDataEditing}
                                 />
                             </div>
+
+                            {existingPatientFound && (
+                                <div className="md:col-span-2 flex items-center space-x-2">
+                                    <Switch
+                                        id="isNewPatient"
+                                        checked={patientData.isNewPatientNeeded}
+                                        onCheckedChange={(checked) =>
+                                            setPatientData({ ...patientData, isNewPatientNeeded: checked })
+                                        }
+                                    />
+                                    <Label htmlFor="isNewPatient">Create new patient record?</Label>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -302,7 +345,7 @@ export function AddNewPatientModal({ open, onOpenChange }: {
                                 <Label htmlFor="doctor">Assign Doctor (Optional)</Label>
                                 <Select
                                     value={queueData.doctorId || ""}
-                                    onValueChange={value => setQueueData({ ...queueData, doctorId: value })}
+                                    onValueChange={value => setQueueData({ ...queueData, doctorId: value || undefined })}
                                 >
                                     <SelectTrigger id="doctor">
                                         <SelectValue placeholder="Select a doctor" />

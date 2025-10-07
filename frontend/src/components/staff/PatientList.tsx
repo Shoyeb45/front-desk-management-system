@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, isToday, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
     Clock,
     User,
@@ -42,11 +42,15 @@ import { getFormattedDoctorName } from "@/lib/utils";
 export function PatientList({
     filter,
     searchTerm,
-    filterStatus
+    filterStatus,
+    updateList,
+    setUpdateList
 }: {
     filter: "TODAY" | "PAST",
     searchTerm: string,
-    filterStatus: CurrentStatusType | undefined
+    filterStatus: CurrentStatusType | "" | undefined,
+    updateList: number,
+    setUpdateList: React.Dispatch<React.SetStateAction<number>>
 }) {
     const [patientQueue, setPatientQueue] = useState<QueueListType[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -71,7 +75,7 @@ export function PatientList({
 
     useEffect(() => {
         fetchPatientList();
-    }, [fetchPatientList]);
+    }, [fetchPatientList, updateList]);
 
     const filteredPatientList = useMemo(() => {
         return patientQueue.filter(patient => {
@@ -101,11 +105,6 @@ export function PatientList({
         }
     };
 
-    const getQueueTypeIcon = (type: QueueType) => {
-        return type === QueueType.EMERGENCY
-            ? <Zap className="h-3 w-3" />
-            : <Activity className="h-3 w-3" />;
-    };
 
     const formatTime = (dateString: string | Date) => {
         const date = typeof dateString === "string" ? parseISO(dateString) : dateString;
@@ -125,6 +124,7 @@ export function PatientList({
         try {
             await deletePatientQueue(id);
             setPatientQueue(prev => prev.filter(p => p.id !== id));
+            setUpdateList(prev => prev + 1); // update the list
             toast.success(`${name} removed from queue`);
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Failed to delete patient";
@@ -144,14 +144,13 @@ export function PatientList({
             const currentPatient = patientQueue.find(p => p.id === id);
             if (!currentPatient) return;
 
-            // Merge existing data with updates (your API requires queueType)
             const payload = {
                 currentStatus: updateData.currentStatus ?? currentPatient.currentStatus,
                 queueType: updateData.queueType ?? currentPatient.queueType
             };
 
             await updatePatientQueue(id, payload);
-
+            setUpdateList(prev => prev + 1);
             setPatientQueue(prev =>
                 prev.map(p =>
                     p.id === id
@@ -246,7 +245,7 @@ export function PatientList({
               group relative
             `}
                     >
-                        <CardHeader className="pb-3">
+                        <CardHeader className="pb-2">
                             <div className="flex flex-wrap items-start justify-between gap-3">
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-2">
@@ -266,21 +265,20 @@ export function PatientList({
                                             <User className="h-3.5 w-3.5" />
                                             {item.patient.age} • {item.patient.gender}
                                         </span>
-                                        {item.patient.phone && <span>{item.patient.phone}</span>}
                                         {item.patient.email && (
                                             <span className="truncate max-w-[180px]">{item.patient.email}</span>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2 items-start">
-                                    <Badge variant={statusConfig.variant} className="flex items-center gap-1">
+                                <div className="flex flex-wrap gap-2 items-end">
+                                    <Badge variant={statusConfig.variant} className="flex items-center gap-1 h-9">
                                         {statusConfig.icon}
                                         {statusConfig.label}
                                     </Badge>
 
                                     {showExpectedTime && (
-                                        <Badge variant="outline" className="flex items-center gap-1 bg-accent/30">
+                                        <Badge variant="outline" className="flex items-center gap-1 bg-accent/31 h-9">
                                             <Clock className="h-3 w-3" />
                                             Est: {formatTime(item.expectedTime!)}
                                         </Badge>
@@ -292,7 +290,7 @@ export function PatientList({
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="h-8 w-8 p-0 group-hover:opacity-100 transition-opacity"
                                             >
                                                 <MoreVertical className="h-4 w-4" />
                                             </Button>

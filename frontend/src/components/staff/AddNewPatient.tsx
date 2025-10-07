@@ -4,7 +4,9 @@ import { Button } from "../ui/button";
 import { AddNewPatientModal } from "./AddNewPatientModal";
 import { Plus } from "lucide-react";
 
-export function AddNewPatient() {
+export function AddNewPatient({ setUpdateList }: {
+    setUpdateList: React.Dispatch<React.SetStateAction<number>>
+}) {
     const [isAddNewModalOpen, setIsAddNewModalOpen] = useState<boolean>(false);
 
     return (<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -21,7 +23,7 @@ export function AddNewPatient() {
             Add New Patient
         </Button>
 
-        <AddNewPatientModal open={isAddNewModalOpen} onOpenChange={setIsAddNewModalOpen} />
+        <AddNewPatientModal open={isAddNewModalOpen} onOpenChange={setIsAddNewModalOpen} setUpdateList={setUpdateList} />
     </div>
     )
 }
