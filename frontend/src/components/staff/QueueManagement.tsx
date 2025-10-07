@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
-import { CurrentStatusType, Patient, TQueue, QueueCreate, QueueType } from "@/types/staffTypes";
+import { CurrentStatusType } from "@/types/staffTypes";
 import { Label } from "../ui/label";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";

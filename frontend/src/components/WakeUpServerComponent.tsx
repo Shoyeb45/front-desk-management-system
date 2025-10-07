@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export function WakeUpServer() {
     useEffect(() => {
         fetch(`${appConfig.backendUrl}/wake-up`)
-            .then((d) => {
+            .then(() => {
                 console.log("Server successfully woke up.");
             })
             .catch(er => {

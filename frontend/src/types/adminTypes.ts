@@ -58,5 +58,6 @@ export interface DoctorAvailability {
 
 export interface DecodedUser {
     id: string;
-    role: "ADMIN" | "STAFF"
+    role: "ADMIN" | "STAFF",
+    exp: number
 }

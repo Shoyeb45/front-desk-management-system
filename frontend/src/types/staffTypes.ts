@@ -1,4 +1,4 @@
-import { Gender } from "./adminTypes";
+import { Employee, Gender } from "./adminTypes";
 
 export enum CurrentStatusType {
     WITH_DOCTOR = "WITH_DOCTOR",
@@ -31,5 +31,12 @@ export interface QueueCreate {
     queue: TQueue,
     patientId?: string,
     patient?: Patient
+}
+
+export interface QueueListType extends Omit<TQueue, "doctorId"> {
+    id: string;
+    createdAt: Date;
+    doctor: Employee;
+    patient: Patient;
 }
 

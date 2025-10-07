@@ -10,4 +10,9 @@ export class PatientQueueController {
         const email = req.query.email as string;
         await PatientQueueService.getPatient(email, res);   
     }
+
+    static async getQueueList(req: Request, res: Response) {
+        const filter = req.query.filter as string;
+        await PatientQueueService.getPatientQueueList(filter, res);
+    }
 }

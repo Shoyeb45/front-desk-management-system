@@ -8,8 +8,10 @@ import { PatientQueueController } from "../controllers/patient-queue.controller"
 const router = Router();
 
 router.route("/")
-    .post(authenticateUser, roleRequired("STAFF"), validate(ZCreateQueuePatient), asyncHandler(PatientQueueController.createQueue));
+    .post(authenticateUser, roleRequired("STAFF"), validate(ZCreateQueuePatient), asyncHandler(PatientQueueController.createQueue))
+    .get( asyncHandler(PatientQueueController.getQueueList));
 
 router.route("/patient")
-    .get(authenticateUser, asyncHandler(PatientQueueController.getPatient))
+    .get(authenticateUser, asyncHandler(PatientQueueController.getPatient));
+
 export default router;

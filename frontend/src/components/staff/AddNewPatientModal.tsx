@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Employee, Gender } from "@/types/adminTypes";
 import { getEmployees } from "../admin/api";
-import { getFormattedDoctorName, getToken } from "@/lib/utils";
+import { getFormattedDoctorName } from "@/lib/utils";
 import { addPatientInQueue, getPatientData } from "./api";
 import { toast } from "sonner";
 
@@ -67,7 +67,7 @@ export function AddNewPatientModal({ open, onOpenChange }: {
                 return;
             }
 
-            setPatientData(prev => ({
+            setPatientData(_prev => ({
                 ...data,
                 email 
             }));
