@@ -22,11 +22,11 @@ export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListP
         } finally {
             setIsLoading(false);
         }
-    }, [role]); // Only recreate when role changes
+    }, [role]); 
 
     useEffect(() => {
         fetchEmployees();
-    }, [fetchEmployees, refreshTrigger]); // Now safe to include
+    }, [fetchEmployees, refreshTrigger]); 
 
     const filteredEmployees = employees.filter(employee =>
         employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

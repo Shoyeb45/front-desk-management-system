@@ -25,7 +25,7 @@ export function ThemeToggle() {
                  hover:bg-background-tertiary transition-colors"
       aria-label="Toggle theme"
     >
-      <span className="text-xl">{getIcon()}</span>
+      <span className="">{getIcon()}</span>
     </button>
   );
 }

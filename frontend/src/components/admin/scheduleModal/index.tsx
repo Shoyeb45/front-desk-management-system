@@ -15,6 +15,7 @@ import { scheduleApi } from '../api';
 import ScheduleList from './ScheduleList';
 import AddScheduleForm from './AddScheduleForm';
 import LoadingState from './LoadingState';
+import { getFormattedDoctorName } from '@/lib/utils';
 
 interface ScheduleModalProps {
     isOpen: boolean;
@@ -28,12 +29,7 @@ const validateTimeRange = (from: string, to: string): boolean => {
     return toHour * 60 + toMin > fromHour * 60 + fromMin;
 };
 
-const doctorName = (name: string) => {
-    if (name.startsWith("Dr") || name.startsWith("dr") || name.startsWith("doctor") || name.startsWith("Doctor")) {
-        return name;
-    }
-    return `Dr ${name}`;
-}
+
 
 export default function ScheduleModal({ isOpen, onOpenChange, doctor }: ScheduleModalProps) {
     const [schedules, setSchedules] = useState<DoctorAvailability[]>([]);
@@ -156,7 +152,7 @@ export default function ScheduleModal({ isOpen, onOpenChange, doctor }: Schedule
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Calendar className="w-5 h-5" />
-                        Schedule for {doctorName(doctor.name)}
+                        Schedule for {getFormattedDoctorName(doctor.name)}
                     </DialogTitle>
                     <DialogDescription>
                         {doctor.specialization && (
