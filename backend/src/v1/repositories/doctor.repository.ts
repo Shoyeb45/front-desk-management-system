@@ -18,7 +18,11 @@ export class DoctorRepository {
     static async getAllDoctor() {
         return await prisma.doctor.findMany({
             select: {
-                id: true, name: true, email: true, specialization: true
+                id: true, name: true, email: true, specialization: true, location: true, doctorAvailability: {
+                    select: {
+                        dayOfWeek: true, availableFrom: true, availableTo: true
+                    }
+                }
             }
         });
     }

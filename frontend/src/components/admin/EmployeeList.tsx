@@ -1,3 +1,4 @@
+// EmployeeList.tsx
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -5,7 +6,14 @@ import { EmployeeItem } from "./EmployeeItem";
 import { getEmployees } from "./api";
 import { Employee, EmployeeListProps } from "@/types/adminTypes";
 
-export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListProps) {
+export function EmployeeList({
+    role,
+    searchTerm,
+    specializationFilter,
+    locationFilter,
+    availabilityFilter,
+    refreshTrigger,
+}: EmployeeListProps) {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,26 +30,46 @@ export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListP
         } finally {
             setIsLoading(false);
         }
-    }, [role]); 
+    }, [role]);
 
     useEffect(() => {
         fetchEmployees();
-    }, [fetchEmployees, refreshTrigger]); 
+    }, [fetchEmployees, refreshTrigger]);
 
-    const filteredEmployees = employees.filter(employee =>
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredEmployees = employees.filter((employee) => {
+        // General search (name or email)
+        const matchesSearch =
+            employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employee.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (role === "staff") {
+            return matchesSearch;
+        }
+
+        // Doctor-specific filters
+        const matchesSpecialization = specializationFilter
+            ? employee.specialization === specializationFilter
+            : true;
+
+        const matchesLocation = locationFilter
+            ? employee.location === locationFilter
+            : true;
+
+        const matchesAvailability = availabilityFilter
+            ? employee.doctorAvailability?.some(
+                (slot) => slot.dayOfWeek === availabilityFilter
+            )
+            : true;
+
+        return matchesSearch && matchesSpecialization && matchesLocation && matchesAvailability;
+    });
 
     if (error) {
         return (
             <Card className="border-destructive">
                 <CardContent className="p-6 text-center">
                     <p className="text-destructive">Error: {error}</p>
-                    <button 
-                        onClick={fetchEmployees}
-                        className="mt-2 text-blue-600 hover:underline"
-                    >
+                    <button onClick={fetchEmployees} className="mt-2 text-blue-600 hover:underline">
                         Retry
                     </button>
                 </CardContent>
@@ -74,7 +102,10 @@ export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListP
             <Card>
                 <CardContent className="p-8 text-center">
                     <p className="text-muted-foreground">
-                        No {role}s found{searchTerm ? ` for "${searchTerm}"` : ""}
+                        No {role}s found
+                        {searchTerm || specializationFilter || locationFilter || availabilityFilter
+                            ? ` matching your filters`
+                            : ""}
                     </p>
                 </CardContent>
             </Card>
@@ -84,11 +115,11 @@ export function EmployeeList({ role, searchTerm, refreshTrigger }: EmployeeListP
     return (
         <div className="space-y-4">
             {filteredEmployees.map((employee) => (
-                <EmployeeItem 
-                    key={employee.id} 
-                    employee={employee} 
-                    role={role} 
-                    id={employee.id} 
+                <EmployeeItem
+                    key={employee.id}
+                    employee={employee}
+                    role={role}
+                    id={employee.id}
                     onEmployeeDeleted={fetchEmployees}
                 />
             ))}

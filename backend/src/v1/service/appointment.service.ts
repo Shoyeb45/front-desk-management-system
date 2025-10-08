@@ -80,6 +80,7 @@ export class AppointmentService {
                 throw new Error("Failed to get today's appointment list, please try again one more time.");
             }
             ApiResponse.success(res, data, "Successfully fetched all today's appointments list.");
+            return;
         }
         
         const data = await AppointmentRepository.getPastAppointments();
