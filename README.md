@@ -1,11 +1,6 @@
 # Front Desk Management System
 
-[![Frontend](https://img.shields.io/badge/Frontend-Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Backend](https://img.shields.io/badge/Backend-Express-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![UI](https://img.shields.io/badge/UI-shadcn%2Fui-000000?logo=react&logoColor=white)](https://ui.shadcn.com/)
-[![Styling](https://img.shields.io/badge/Styling-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-![](https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white)
+[![Frontend](https://img.shields.io/badge/Frontend-Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)   [![Backend](https://img.shields.io/badge/Backend-Express-000000?logo=express&logoColor=white)](https://expressjs.com/)  [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  [![UI](https://img.shields.io/badge/UI-shadcn%2Fui-000000?logo=react&logoColor=white)](https://ui.shadcn.com/)  [![Styling](https://img.shields.io/badge/Styling-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)  [![Database](https://img.shields.io/badge/Database-Neon-000000?logo=postgresql&logoColor=white)](https://neon.tech/)  [![Container](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=flat)](https://www.docker.com/)
 
 A modern, responsive clinic management system designed to streamline front-desk operations for healthcare facilities. The system enables efficient patient queue management, appointment scheduling, and staff coordination.
 
@@ -13,7 +8,7 @@ A modern, responsive clinic management system designed to streamline front-desk 
 
 ## 🚀 Live Demo
 
-- **Frontend**: [https://allo-health-project.vercel.app](https://front-desk-management.vercel.app)  
+- **Frontend**: [https://allo-health-project.vercel.app](https://allo-health-project.vercel.app)  
 - **Backend**: Hosted on Render (API endpoints consumed by frontend)
 
 ---
@@ -33,10 +28,38 @@ A modern, responsive clinic management system designed to streamline front-desk 
 ### Backend
 - **Framework**: Express.js
 - **Language**: TypeScript
-- **Database**: MongoDB (with Mongoose ODM)
+- **Database**: **PostgreSQL** via [Neon](https://neon.tech/) (serverless, branching-enabled)
+- **ORM**: Prisma
 - **Authentication**: JWT (JSON Web Tokens)
 - **Validation**: Zod
+- **Containerization**: Docker
 - **Deployment**: Render
+
+---
+
+## 🐳 Docker Support
+
+The application is fully containerized for consistent local development and easy deployment.
+
+### Features:
+- Isolated frontend & backend services
+- Pre-configured environment loading
+- Hot-reload in development mode
+- Production-ready image builds
+
+### Usage:
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Stop services
+docker-compose down
+
+# Rebuild after dependency changes
+docker-compose build
+```
+
+> 💡 **Note**: Ensure your `.env` files are placed in the root before running. Docker Compose mounts them securely into containers.
 
 ---
 
@@ -49,10 +72,10 @@ A modern, responsive clinic management system designed to streamline front-desk 
 - Session persistence with localStorage
 
 <p align="center">
-    <img src="./public/landing.png">
-    <i>Sign In Page(Dark)</i>
+    <img src="./public/landing.png" alt="Sign In Page (Dark)">
+    <br>
+    <i>Sign In Page (Dark)</i>
 </p>
-
 
 ### 👥 Admin Dashboard
 - **Doctor Management**:  
@@ -61,8 +84,9 @@ A modern, responsive clinic management system designed to streamline front-desk 
   - View doctor availability
 
 <p align="center">
-    <img src="./public/admin2.png">
-    <i>Admin Page - Doctor Management(Dark)</i>
+    <img src="./public/admin2.png" alt="Admin - Doctor Management">
+    <br>
+    <i>Admin Page - Doctor Management (Dark)</i>
 </p>
 
 - **Staff Management**:  
@@ -70,10 +94,10 @@ A modern, responsive clinic management system designed to streamline front-desk 
   - Manage permissions
 
 <p align="center">
-    <img src="./public/admin1.png">
-    <i>Admin Page - Staff Management(Dark)</i>
+    <img src="./public/admin1.png" alt="Admin - Staff Management">
+    <br>
+    <i>Admin Page - Staff Management (Dark)</i>
 </p>
-
 
 ### 📋 Staff Dashboard
 - **Real-time Queue Management**:  
@@ -89,10 +113,10 @@ A modern, responsive clinic management system designed to streamline front-desk 
   - Assign available doctors based on selected time  
   - Real-time doctor availability check
 
-
 <p align="center">
-    <img src="./public/staff1.png">
-    <i>Staff Page - Queue Management, adding patient(Dark)</i>
+    <img src="./public/staff1.png" alt="Staff - Queue Management">
+    <br>
+    <i>Staff Page - Queue Management, adding patient (Dark)</i>
 </p>
 
 ### 🗂️ Patient Management
@@ -101,10 +125,10 @@ A modern, responsive clinic management system designed to streamline front-desk 
 - Option to create new patient record even for existing emails (for corrections)
 
 <p align="center">
-    <img src="./public/staff2.png">
-    <i>Staff Page - Appointment Management, editing appointment(Light)</i>
+    <img src="./public/staff2.png" alt="Staff - Appointment Management">
+    <br>
+    <i>Staff Page - Appointment Management, editing appointment (Light)</i>
 </p>
-
 
 ### 🌓 User Experience
 - **Dark/Light/System Theme Toggle**
@@ -123,67 +147,70 @@ A modern, responsive clinic management system designed to streamline front-desk 
 - **Password**: `12345678`
 
 ### Staff Account
-*(Create via Admin Dashboard or use following)*
-
 - **Email**: `staff1@gmail.com`
 - **Password**: `12345678`
 
+> 🔒 For demo only. Never use in production.
 
 ---
 
 ## 📦 Project Structure
 
-
 ```bash
 .
 ├── backend
-│   ├── prisma              # Database related files
-│   │   └── migrations
-│   └── src
-│       ├── config
-│       ├── database
-│       ├── middlewares
-│       ├── utils
-│       └── v1          
-│           ├── controllers
-│           ├── repositories
-│           ├── routes
-│           ├── service
-│           └── types
-└── frontend
-    ├── public
-    └── src
-        ├── app             # Main app pages
-        │   └── (dashboard)
-        │       ├── admin
-        │       └── staff
-        │           ├── appointments
-        │           └── queue
-        ├── components      # all components
-        │   ├── admin
-        │   ├── auth
-        │   ├── staff
-        │   └── ui          # Shadcn related components
-        ├── config
-        ├── lib             # Util function
-        └── types           # All types for frontend
-
+│   ├── prisma              # Prisma schema & migrations
+│   │   └── migrations
+│   └── src
+│       ├── config
+│       ├── database        # Prisma client setup
+│       ├── middlewares
+│       ├── utils
+│       └── v1
+│           ├── controllers
+│           ├── repositories
+│           ├── routes
+│           ├── service
+│           └── types
+├── frontend
+│   ├── public
+│   └── src
+│       ├── app             # App Router pages
+│       │   └── (dashboard)
+│       │       ├── admin
+│       │       └── staff
+│       │           ├── appointments
+│       │           └── queue
+│       ├── components
+│       │   ├── admin
+│       │   ├── auth
+│       │   ├── staff
+│       │   └── ui          # shadcn/ui
+│       ├── config
+│       ├── lib             # Utilities
+│       └── types           # TypeScript interfaces
+└── docker-compose.yml      # Multi-container orchestration
 ```
+
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js v18+
-- PostgreSQL instance
-- `.env` file with required environment variables
+- Docker (optional but recommended)
+- [Neon](https://neon.tech/) account (for cloud PostgreSQL)
 
-> NOTE: Use values without double quotes(")
-### Installation
-1. **Clone the repository**
+### Using Neon DB (Recommended)
+1. Sign up at [neon.tech](https://neon.tech/)
+2. Create a new project → copy your **connection string**
+3. Set it as `DATABASE_URL` in your backend `.env`
+
+### Local Setup (Without Docker)
+1. **Clone the repo**
    ```bash
    git clone https://github.com/Shoyeb45/front-desk-management-system
-   cd front-desk-management
+   cd front-desk-management-system
    ```
 
 2. **Install dependencies**
@@ -191,76 +218,74 @@ A modern, responsive clinic management system designed to streamline front-desk 
    npm install
    ```
 
-3. **Set up environment variables**  
-   - Create a `.env.local` file in the root directory:
+3. **Configure environment files**
 
-
-    - Exmple of .env:
-
-        1. Frontend(NextJS)
-
-        ```bash
-        NEXT_PUBLIC_BACKEND_URL="backend url wherever it is hosted"
-        ``` 
-
-        2. Backend(ExpressJS)
-
-        ```bash
-
-        DATABASE_URL="postgres sql connection string"
-        JWT_SECRET="secret"
-        JWT_EXPIRY="Expiry time, exm 10h"
-        FRONTEND_URL="front end url wherever it is hosted"
-        NODE_ENV="development or proudction"
-        ```
-4. **Run both the frontend and backend development server**
-   ```bash
-   npm run dev
+   **Frontend** (`.env.local` in `/frontend`):
+   ```env
+   NEXT_PUBLIC_BACKEND_URL=https://your-backend.onrender.com
    ```
 
-5. **Open your browser**  
-   Visit [http://localhost:3000](http://localhost:3000)
+   **Backend** (`.env` in `/backend`):
+   ```env
+   DATABASE_URL=postgresql://... # From Neon
+   JWT_SECRET=your_strong_secret_here
+   JWT_EXPIRY=10h
+   FRONTEND_URL=https://allo-health-project.vercel.app
+   NODE_ENV=development
+   ```
+
+4. **Run services**
+   ```bash
+   # Terminal 1: Backend
+   cd backend && npm run dev
+
+   # Terminal 2: Frontend
+   cd frontend && npm run dev
+   ```
+
+5. Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## 📤 Deployment
 
-### Frontend (Vercel)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel project settings
-3. Deploy automatically on push to `main` branch
+### Frontend → Vercel
+1. Import `frontend/` directory
+2. Add `NEXT_PUBLIC_BACKEND_URL` in Vercel env vars
+3. Deploy!
 
-### Backend (Render)
-1. Create a new Web Service on Render
-2. Connect your backend repository
-3. Set environment variables (MongoDB URI, JWT secret, etc.)
-4. Deploy with auto-redeploy on push
+### Backend → Render
+1. Deploy `backend/` as Web Service
+2. Add all `.env` variables (including `DATABASE_URL` from Neon)
+3. Enable auto-deploys
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+We welcome contributions!  
+1. Fork the repo  
+2. Create a feature branch  
+3. Commit & push  
+4. Open a PR with a clear description
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the **MIT License**. See [LICENSE](./LICENSE) for details.
 
 ---
 
 ## 🙏 Acknowledgements
 
-- [shadcn/ui](https://ui.shadcn.com/) for beautiful, accessible components
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
-- [Lucide Icons](https://lucide.dev/) for consistent iconography
-- [Sonner](https://sonner.emilkowal.dev/) for elegant toast notifications
-- [Docker](https://docker.com/) for amazing and easy containerization.
----
+- [shadcn/ui](https://ui.shadcn.com/) – Beautiful, accessible, and customizable components  
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework  
+- [Lucide Icons](https://lucide.dev/) – Consistent, lightweight icons  
+- [Sonner](https://sonner.emilkowal.dev/) – Elegant toast notifications  
+- [Neon](https://neon.tech/) – Serverless PostgreSQL with branching  
+- [Docker](https://www.docker.com/) – Reliable containerization for dev & prod
 
+--- 
+
+✅ **Ready for clinics. Built for developers.**
