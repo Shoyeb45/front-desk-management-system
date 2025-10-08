@@ -1,19 +1,12 @@
 "use client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Search } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "../ui/button";
-import { AddNewAppointmentModal } from "./AddNewAppointmentModal";
 import { TAppointment } from "@/types/staffTypes";
 import { getAppointments } from "./api";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-
-
 import { Pencil, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { deleteAppointment } from "./api";

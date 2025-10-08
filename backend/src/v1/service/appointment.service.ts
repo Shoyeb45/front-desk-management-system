@@ -80,12 +80,21 @@ export class AppointmentService {
                 throw new Error("Failed to get today's appointment list, please try again one more time.");
             }
             ApiResponse.success(res, data, "Successfully fetched all today's appointments list.");
+            return;
         }
-        
+
         const data = await AppointmentRepository.getPastAppointments();
         if (!data) {
             throw new Error("Failed to get past appointment list, please try again one more time.");
         }
         ApiResponse.success(res, data, "Successfully fetched all past appointments list.");
+    }
+
+    static async getStats(res: Response) {
+        const data = await AppointmentRepository.getTodaysStats();
+        if (!data) {
+            throw new ApiError("Failed to get appointment stats for today.");
+        }
+        ApiResponse.success(res, data, "Successfully computed appointment stats for today.", HTTP_STATUS.OK);
     }
 }

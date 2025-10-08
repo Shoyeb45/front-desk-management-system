@@ -25,4 +25,8 @@ export class PatientQueueController {
         const id = req.params.id as string;
         await PatientQueueService.editPatientQueue(id, req.body, res);
     }
+
+    static async getStats(req: Request, res: Response) {
+        await PatientQueueService.getStats(res);
+    }
 }

@@ -10,7 +10,8 @@ const router = Router();
 router.route("/")
     .post(authenticateUser, validate(ZCreateAppointment), asyncHandler(AppointmentController.createAppointment))
     .get(authenticateUser, asyncHandler(AppointmentController.getAppointments));
-
+router.route("/stats")
+    .get(authenticateUser, asyncHandler(AppointmentController.getStats));
 router.route("/:id")
     .patch(authenticateUser, validate(ZEditAppointment), asyncHandler(AppointmentController.updateAppointment))
     .delete(authenticateUser, asyncHandler(AppointmentController.deleteAppointment));
