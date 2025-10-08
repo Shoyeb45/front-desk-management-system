@@ -1,3 +1,4 @@
+// EmployeeItem.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -14,42 +15,43 @@ import { EmployeeItemProps } from "@/types/adminTypes";
 import { EditModal } from "./EditModal";
 import { UserDeleteModal } from "./UserDeleteModal";
 import { getInitials } from "@/lib/utils";
-import ScheduleModal  from "./scheduleModal/index";
-
+import ScheduleModal from "./scheduleModal/index";
 
 export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItemProps) {
-    // state variable for tracking delete modal
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    // state variable for tracking edit modal
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    // schedule modal for doctor
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
     return (
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+                {/* Main content: flex column on mobile, row on larger screens */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    {/* Left: Avatar + Info */}
                     <div className="flex items-center space-x-4">
-                        <Avatar className="h-12 w-12">
+                        <Avatar className="h-12 w-12 flex-shrink-0">
                             <AvatarImage
-                                src={`https://avatar.vercel.sh/${employee.email}`}
+                                src={`https://avatar.vercel.sh/${encodeURIComponent(employee.email)}`}
                                 alt={employee.name}
                             />
                             <AvatarFallback>{getInitials(employee.name)}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <h3 className="font-semibold">{employee.name}</h3>
+                            <h3 className="font-semibold text-sm sm:text-base">{employee.name}</h3>
                             <div className="flex items-center gap-2 mt-1">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
-                                <p className="text-sm text-muted-foreground">{employee.email}</p>
+                                <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                                <p className="text-xs sm:text-sm text-muted-foreground break-all">
+                                    {employee.email}
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    {/* Right: Badge + Menu */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                         <Badge
                             variant={role === "doctor" ? "default" : "secondary"}
-                            className="py-1"
+                            className="py-1 text-xs sm:text-sm whitespace-nowrap"
                         >
                             {role === "doctor" ? employee?.specialization ?? "Doctor" : "Staff"}
                         </Badge>
@@ -61,25 +63,30 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={(e) => {
-                                    e.preventDefault();
-                                    setIsEditDialogOpen(true);
-                                }}>
+                                <DropdownMenuItem
+                                    onSelect={(e) => {
+                                        e.preventDefault();
+                                        setIsEditDialogOpen(true);
+                                    }}
+                                >
                                     Edit {role === "doctor" ? "Doctor" : "Staff"}
                                 </DropdownMenuItem>
 
-                                {/* Doctor specific menu */}
-                                {role === "doctor" && <DropdownMenuItem onSelect={(e) => {
-                                    e.preventDefault();
-                                    setIsScheduleModalOpen(true);
-                                }}>
-                                    View Schedule
-                                </DropdownMenuItem>}
+                                {role === "doctor" && (
+                                    <DropdownMenuItem
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                            setIsScheduleModalOpen(true);
+                                        }}
+                                    >
+                                        View Schedule
+                                    </DropdownMenuItem>
+                                )}
 
                                 <DropdownMenuItem
                                     className="text-destructive"
                                     onSelect={(e) => {
-                                        e.preventDefault(); // Prevent dropdown from closing immediately
+                                        e.preventDefault();
                                         setIsDeleteDialogOpen(true);
                                     }}
                                 >
@@ -90,7 +97,7 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                     </div>
                 </div>
 
-                {/* Delete modal */}
+                {/* Modals */}
                 <UserDeleteModal
                     isDeleteDialogOpen={isDeleteDialogOpen}
                     setIsDeleteDialogOpen={setIsDeleteDialogOpen}
@@ -99,7 +106,6 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                     onEmployeeDeleted={onEmployeeDeleted}
                 />
 
-                {/* Edit modal */}
                 <EditModal
                     role={role}
                     open={isEditDialogOpen}
@@ -108,15 +114,13 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                     onEmployeeEdited={onEmployeeDeleted}
                 />
 
-                {/* Schedule modal for doctor */}
-                {role === "doctor" && 
-                    <ScheduleModal 
+                {role === "doctor" && (
+                    <ScheduleModal
                         isOpen={isScheduleModalOpen}
                         onOpenChange={setIsScheduleModalOpen}
                         doctor={employee}
                     />
-                }
-
+                )}
             </CardContent>
         </Card>
     );

@@ -37,7 +37,6 @@ export function EmployeeList({
     }, [fetchEmployees, refreshTrigger]);
 
     const filteredEmployees = employees.filter((employee) => {
-        // General search (name or email)
         const matchesSearch =
             employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             employee.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -46,7 +45,6 @@ export function EmployeeList({
             return matchesSearch;
         }
 
-        // Doctor-specific filters
         const matchesSpecialization = specializationFilter
             ? employee.specialization === specializationFilter
             : true;
@@ -67,9 +65,12 @@ export function EmployeeList({
     if (error) {
         return (
             <Card className="border-destructive">
-                <CardContent className="p-6 text-center">
-                    <p className="text-destructive">Error: {error}</p>
-                    <button onClick={fetchEmployees} className="mt-2 text-blue-600 hover:underline">
+                <CardContent className="p-4 sm:p-6 text-center">
+                    <p className="text-destructive text-sm sm:text-base">Error: {error}</p>
+                    <button
+                        onClick={fetchEmployees}
+                        className="mt-2 text-sm text-blue-600 hover:underline"
+                    >
                         Retry
                     </button>
                 </CardContent>
@@ -83,11 +84,11 @@ export function EmployeeList({
                 {[...Array(5)].map((_, index) => (
                     <Card key={index}>
                         <CardContent className="p-4">
-                            <div className="flex items-center space-x-4">
-                                <Skeleton className="h-12 w-12 rounded-full" />
-                                <div className="space-y-2 flex-1">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                                <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+                                <div className="space-y-2 w-full">
                                     <Skeleton className="h-4 w-1/2" />
-                                    <Skeleton className="h-4 w-1/3" />
+                                    <Skeleton className="h-4 w-2/3" />
                                 </div>
                             </div>
                         </CardContent>
@@ -100,8 +101,8 @@ export function EmployeeList({
     if (filteredEmployees.length === 0) {
         return (
             <Card>
-                <CardContent className="p-8 text-center">
-                    <p className="text-muted-foreground">
+                <CardContent className="p-6 text-center">
+                    <p className="text-muted-foreground text-sm sm:text-base">
                         No {role}s found
                         {searchTerm || specializationFilter || locationFilter || availabilityFilter
                             ? ` matching your filters`
@@ -119,7 +120,6 @@ export function EmployeeList({
                     key={employee.id}
                     employee={employee}
                     role={role}
-                    id={employee.id}
                     onEmployeeDeleted={fetchEmployees}
                 />
             ))}

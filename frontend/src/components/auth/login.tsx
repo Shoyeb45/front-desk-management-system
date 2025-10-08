@@ -104,9 +104,6 @@ export const Login = () => {
                     <blockquote className="text-2xl font-medium text-primary mb-6">
                         “The best way to care for patients is to care for those who care for them.”
                     </blockquote>
-                    <p className="text-muted-foreground">
-                        — Clinic Management System
-                    </p>
                     <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
                         Empowering healthcare teams with seamless tools to focus on what matters most:
                         <span className="font-semibold text-primary"> patient care</span>.
