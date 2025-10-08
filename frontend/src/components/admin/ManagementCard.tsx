@@ -18,7 +18,6 @@ interface ManagementCardProps {
     role: "doctor" | "staff";
 }
 
-
 export function ManagementCard({ role }: ManagementCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -40,14 +39,14 @@ export function ManagementCard({ role }: ManagementCardProps) {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl font-semibold capitalize">{role}s Management</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <h2 className="text-lg sm:text-xl font-semibold capitalize">{role}s Management</h2>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                         Manage all {role} accounts and information
                     </p>
                 </div>
-                <Button onClick={handleAddEmployee} className="flex items-center gap-2">
+                <Button onClick={handleAddEmployee} className="w-full sm:w-auto flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
                     <Plus className="h-4 w-4" />
                     Add New {role === "doctor" ? "Doctor" : "Staff"}
                 </Button>
@@ -55,24 +54,27 @@ export function ManagementCard({ role }: ManagementCardProps) {
 
             {/* Search */}
             <div className="relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder={`Search ${role}s by name or email...`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8"
+                    className="pl-10 py-2 text-sm"
                 />
             </div>
 
             {/* Doctor Filters */}
             {role === "doctor" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-muted/20 rounded-lg border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-muted/20 rounded-lg border">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Specialization</label>
-                        <Select value={specializationFilter} onValueChange={(val) => {
-                            setSpecializationFilter((val === "nil" ? "" : val));
-                        }}>
-                            <SelectTrigger>
+                        <label className="text-xs sm:text-sm font-medium">Specialization</label>
+                        <Select
+                            value={specializationFilter}
+                            onValueChange={(val) => {
+                                setSpecializationFilter(val === "nil" ? "" : val);
+                            }}
+                        >
+                            <SelectTrigger className="text-xs sm:text-sm">
                                 <SelectValue placeholder="All Specializations" />
                             </SelectTrigger>
                             <SelectContent>
@@ -87,11 +89,14 @@ export function ManagementCard({ role }: ManagementCardProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Location</label>
-                        <Select value={locationFilter} onValueChange={(val) => {
-                            setLocationFilter((val === "nil" ? "" : val));
-                        }}>
-                            <SelectTrigger>
+                        <label className="text-xs sm:text-sm font-medium">Location</label>
+                        <Select
+                            value={locationFilter}
+                            onValueChange={(val) => {
+                                setLocationFilter(val === "nil" ? "" : val);
+                            }}
+                        >
+                            <SelectTrigger className="text-xs sm:text-sm">
                                 <SelectValue placeholder="All Locations" />
                             </SelectTrigger>
                             <SelectContent>
@@ -106,11 +111,14 @@ export function ManagementCard({ role }: ManagementCardProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Available On</label>
-                        <Select value={availabilityFilter} onValueChange={(val) => {
-                            setAvailabilityFilter((val === "nil" ? "" : val));
-                        }}>
-                            <SelectTrigger>
+                        <label className="text-xs sm:text-sm font-medium">Available On</label>
+                        <Select
+                            value={availabilityFilter}
+                            onValueChange={(val) => {
+                                setAvailabilityFilter(val === "nil" ? "" : val);
+                            }}
+                        >
+                            <SelectTrigger className="text-xs sm:text-sm">
                                 <SelectValue placeholder="Any Day" />
                             </SelectTrigger>
                             <SelectContent>
@@ -128,9 +136,9 @@ export function ManagementCard({ role }: ManagementCardProps) {
                             variant="outline"
                             size="sm"
                             onClick={handleClearFilters}
-                            className="w-full flex items-center gap-2"
+                            className="w-full flex items-center justify-center gap-2 text-xs sm:text-sm px-2 py-1.5 h-9"
                         >
-                            <Filter className="h-4 w-4" />
+                            <Filter className="h-3.5 w-3.5" />
                             Clear Filters
                         </Button>
                     </div>
