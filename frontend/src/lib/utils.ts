@@ -59,3 +59,32 @@ export const getCurrentTime = () => {
     const now = new Date();
     return now.toTimeString().slice(0, 5); // "HH:mm"
 };
+
+export function toLocalDateTimeString(date: unknown): string {
+    // Handle null/undefined or non-Date inputs
+    let d: Date;
+
+    if (date instanceof Date) {
+        d = date;
+    } else if (typeof date === 'string' || typeof date === 'number') {
+        // Try to parse it
+        d = new Date(date);
+    } else {
+        // Fallback to today
+        d = new Date();
+    }
+
+    // Check if it's a valid date
+    if (isNaN(d.getTime())) {
+        console.warn("Invalid date passed to toLocalDateTimeString:", date);
+        d = new Date(); // fallback to now
+    }
+
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const min = pad(d.getMinutes());
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}

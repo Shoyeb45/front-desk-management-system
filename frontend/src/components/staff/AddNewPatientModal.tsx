@@ -23,11 +23,7 @@ export function AddNewPatientModal({
     onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
     setUpdateList: React.Dispatch<React.SetStateAction<number>>;
 }) {
-    // Get current time in "HH:mm" format
-    const getCurrentTime = () => {
-        const now = new Date();
-        return now.toTimeString().slice(0, 5); // "HH:mm"
-    };
+   
 
     const [patientData, setPatientData] = useState<Patient>({
         name: "",
@@ -40,7 +36,7 @@ export function AddNewPatientModal({
     });
 
     const [queueData, setQueueData] = useState<TQueue>({
-        arrivalTime: getCurrentTime(), // ✅ Default to current time
+        arrivalTime: new Date().toISOString(), // ✅ Default to current time
         currentStatus: CurrentStatusType.WAITING,
         queueType: QueueType.NORMAL
     });
@@ -71,7 +67,7 @@ export function AddNewPatientModal({
                 isNewPatientNeeded: false
             });
             setQueueData({
-                arrivalTime: getCurrentTime(),
+                arrivalTime: new Date().toISOString(),
                 currentStatus: CurrentStatusType.WAITING,
                 queueType: QueueType.NORMAL
             });

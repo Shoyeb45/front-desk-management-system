@@ -18,4 +18,8 @@ export class AppointmentController {
         const filter = req.query.filter as string;
         await AppointmentService.getAppointments(filter, res);
     }
+
+    static async getStats(req: Request, res: Response) {
+        await AppointmentService.getStats(res);
+    }
 }

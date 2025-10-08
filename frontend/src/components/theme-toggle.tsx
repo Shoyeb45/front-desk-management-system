@@ -1,7 +1,7 @@
-// src/components/theme-toggle.tsx
 'use client';
 
 import { useTheme } from './theme-provider';
+import { Sun, Moon, Monitor } from 'lucide-react';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -13,19 +13,25 @@ export function ThemeToggle() {
   };
 
   const getIcon = () => {
-    if (theme === 'light') return '☀️';
-    if (theme === 'dark') return '🌙';
-    return '💻';
+    switch (theme) {
+      case 'light':
+        return <Sun className="h-4 w-4" />;
+      case 'dark':
+        return <Moon className="h-4 w-4" />;
+      default:
+        return <Monitor className="h-4 w-4" />;
+    }
   };
 
   return (
     <button
       onClick={cycleTheme}
       className="p-2 rounded-lg bg-background-secondary border border-border 
-                 hover:bg-background-tertiary transition-colors"
+                 hover:bg-background-tertiary transition-colors duration-200
+                 flex items-center justify-center"
       aria-label="Toggle theme"
     >
-      <span className="">{getIcon()}</span>
+      {getIcon()}
     </button>
   );
 }

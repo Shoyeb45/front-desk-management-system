@@ -223,4 +223,12 @@ export class PatientQueueService {
 
         ApiResponse.success(res, updatedData, "Successfully updated the queue data.", HTTP_STATUS.OK);
     }
+
+    static async getStats(res: Response) {
+        const data = await QueueRepository.getTodaysStats();
+        if (!data) {
+            throw new ApiError("Failed to get queue stats for today.");
+        }
+        ApiResponse.success(res, data, "Successfully computed queue stats for today.", HTTP_STATUS.OK);
+    }
 }
