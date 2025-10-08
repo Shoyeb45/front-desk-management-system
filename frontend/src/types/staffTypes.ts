@@ -42,9 +42,30 @@ export interface QueueListType extends Omit<TQueue, "doctorId"> {
     expectedTime?: Date
 }
 
-
-
 export interface UpdateQueueData {
     currentStatus?: CurrentStatusType,
     queueType: QueueType
 };
+
+export enum AppointmentStatus {
+    BOOKED = "BOOKED",
+    CONFIRMED = "CONFIRMED",
+    CANCELLED = "CANCELLED",
+    DONE = "DONE",
+    NO_SHOW = "NO_SHOW",
+}
+
+export interface AppointmentCreate {
+    patient: Patient,
+    appointmentDate: string,
+    status: AppointmentStatus,
+    doctorId: string 
+}
+
+export interface TAppointment extends Omit<Omit<AppointmentCreate, "patient">, "doctorId"> {
+    id: string;
+    doctor: Employee;
+    patient: Patient;
+    createdAt: Date,
+    updatedAt: Date
+}

@@ -6,8 +6,8 @@ export class DoctorAvailabilityRepository {
         const data = slots.map(slot => ({
             doctorId,
             dayOfWeek: slot.dayOfWeek,
-            availableFrom: new Date(`1970-01-01T${slot.availableFrom}:00Z`),
-            availableTo: new Date(`1970-01-01T${slot.availableTo}:00Z`),
+            availableFrom: slot.availableFrom,
+            availableTo: slot.availableTo
         }));
 
         return await prisma.doctorAvailability.createMany({

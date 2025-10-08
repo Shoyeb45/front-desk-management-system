@@ -19,6 +19,10 @@ export const ZEditDoctor = z.object({
     gender: z.enum(Gender).optional()
 });
 
+export const ZAvailableDoctors = z.object({
+    time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Use HH:MM")
+});
 
+export type TAvailableDoctors = z.infer<typeof ZAvailableDoctors>;
 export type TCreateDoctor = z.infer<typeof ZCreateDoctor>;
 export type TEditDoctor = z.infer<typeof ZEditDoctor>;

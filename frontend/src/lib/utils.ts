@@ -3,7 +3,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs))
 }
 
 export const getInitials = (name: string) => {
@@ -45,7 +45,7 @@ export const getDayColor = (day: DayOfWeek): string => {
 
 
 export function getToken() {
-  return localStorage.getItem("token");
+    return localStorage.getItem("token");
 }
 
 export const getFormattedDoctorName = (name: string) => {
@@ -54,3 +54,8 @@ export const getFormattedDoctorName = (name: string) => {
     }
     return `Dr ${name}`;
 }
+
+export const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().slice(0, 5); // "HH:mm"
+};

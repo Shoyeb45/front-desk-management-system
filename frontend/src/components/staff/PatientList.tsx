@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { formatInTimeZone } from "date-fns-tz";
 import {
     CurrentStatusType,
     QueueListType,
@@ -108,7 +109,7 @@ export function PatientList({
 
     const formatTime = (dateString: string | Date) => {
         const date = typeof dateString === "string" ? parseISO(dateString) : dateString;
-        return format(date, "h:mm a");
+        return formatInTimeZone(date, "Asia/Kolkata", "h:mm a");
     };
 
     const formatDate = (dateString: string | Date) => {
