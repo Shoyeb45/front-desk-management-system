@@ -42,15 +42,23 @@ export function removeKeys<T extends Record<string, any>>(obj: T, keysToRemove: 
 export function getTodaysDateAttachedWithTime(time: string) {
   const [hours, minutes] = time.split(":").map(Number);
 
-  const now = new Date(); // today
-  const combinedDate = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    hours,
-    minutes,
-    0 // seconds
-  );
+  // Get current UTC date parts
+  const now = new Date();
+
+  // Compute today's IST midnight in UTC
+  const utcFromISTOffset = 5.5 * 60; // minutes (IST = UTC+5:30)
+  const totalMinutes = hours * 60 + minutes - utcFromISTOffset;
+
+  // Construct UTC date corresponding to that IST time
+  const combinedDate = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    0,
+    totalMinutes,
+    0
+  ));
 
   return combinedDate.toISOString();
 }
+
