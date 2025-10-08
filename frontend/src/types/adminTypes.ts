@@ -11,7 +11,10 @@ export interface Employee {
     location?: string;
     specialization?: string,
     role?: "ADMIN" | "STAFF";
+    doctorAvailability?: DoctorAvailability[]
 }
+
+
 
 export interface EmployeeItemProps {
     employee: Employee;
@@ -29,9 +32,12 @@ export interface AddEmployeeModalProps {
 
 
 export interface EmployeeListProps {
-    role: "doctor" | "staff";
-    searchTerm: string;
-    refreshTrigger: number;
+  role: "doctor" | "staff";
+  searchTerm: string;
+  refreshTrigger: number;
+  specializationFilter?: string;
+  locationFilter?: string;
+  availabilityFilter?: string;
 }
 
 export interface EditData {

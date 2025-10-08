@@ -10,14 +10,15 @@ const router = Router();
 router.route("/available")
     .get(authenticateUser, asyncHandler(DoctorController.getAvailableDoctors));
 router.route("/")
-    .post(authenticateUser, roleRequired("ADMIN"), validate(ZCreateDoctor), asyncHandler(DoctorController.createDoctor));
+    .post(authenticateUser, validate(ZCreateDoctor), asyncHandler(DoctorController.createDoctor));
 
 router.route("/")
     .get(authenticateUser, asyncHandler(DoctorController.getDoctors));
     
 router.route("/:id")
-    .delete(authenticateUser, roleRequired("ADMIN"), asyncHandler(DoctorController.deleteDoctor))
+    .delete(authenticateUser,  asyncHandler(DoctorController.deleteDoctor))
     .get(asyncHandler(DoctorController.getDoctor))
-    .put(authenticateUser, roleRequired("ADMIN"), validate(ZEditDoctor), asyncHandler(DoctorController.editDoctor))
+    .put(authenticateUser, validate(ZEditDoctor), asyncHandler(DoctorController.editDoctor));
+    
 
 export default router;

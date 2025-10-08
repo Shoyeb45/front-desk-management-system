@@ -19,7 +19,6 @@ import {
 import { AppointmentStatus, TAppointment } from "@/types/staffTypes";
 import { updateAppointment, getAvailableDoctors } from "./api";
 import { useEffect, useState } from "react";
-import { format, parseISO } from "date-fns";
 import { getCurrentTime } from "@/lib/utils";
 import { toast } from "sonner";
 

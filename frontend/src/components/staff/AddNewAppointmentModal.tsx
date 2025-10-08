@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
-import { CurrentStatusType, Patient, AppointmentCreate, AppointmentStatus } from "@/types/staffTypes";
+import { Patient, AppointmentCreate, AppointmentStatus } from "@/types/staffTypes";
 import { Label } from "../ui/label";
 import { Pencil } from "lucide-react";
 import { Input } from "../ui/input";
