@@ -2,7 +2,7 @@ import { appConfig } from "@/config";
 import { getToken } from "@/lib/utils";
 import { Employee } from "@/types/adminTypes";
 import { ApiErrorResponse, ApiSuccessReponse } from "@/types/apiTypes";
-import { Patient, QueueCreate, QueueListType, TQueue, UpdateQueueData } from "@/types/staffTypes";
+import { AppointmentCreate, Patient, QueueCreate, QueueListType, TAppointment, TQueue, UpdateQueueData } from "@/types/staffTypes";
 
 export async function getUserData(id: string | undefined) {
     if (!id) {
@@ -186,4 +186,153 @@ export async function deletePatientQueue(id: string) {
 
     return apiResponse.data;
 }
+
+export async function createAppointment(formData: AppointmentCreate) {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/appointment`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData)
+    });
+   
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to create appointment for patient: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<Omit<AppointmentCreate, "patient">> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
+export async function updateAppointment(id: string, formData: Omit<AppointmentCreate, "patient">) {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/appointment/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData)
+    });
+   
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to update appointment for patient: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<Omit<AppointmentCreate, "patient">> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
+export async function deleteAppointment(id: string) {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/appointment/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    });
+   
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to remove appointment for patient: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<Omit<AppointmentCreate, "patient">> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
+export async function getAppointments(filter: "TODAY" | "PAST") {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/appointment?filter=${filter}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    });
+   
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to get appointments for patient: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<TAppointment[]> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
+
+export async function getAvailableDoctors(time: string) {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/doctor/available?time=${time}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    });
+   
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to get available doctors.: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+
+    const apiResponse: ApiSuccessReponse<Employee[]> = await response.json();
+
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+
+    return apiResponse.data;
+}
+
 

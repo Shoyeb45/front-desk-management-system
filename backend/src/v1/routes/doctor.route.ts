@@ -7,6 +7,8 @@ import { DoctorController } from "../controllers/doctor.controller";
 
 const router = Router();
 
+router.route("/available")
+    .get(authenticateUser, asyncHandler(DoctorController.getAvailableDoctors));
 router.route("/")
     .post(authenticateUser, roleRequired("ADMIN"), validate(ZCreateDoctor), asyncHandler(DoctorController.createDoctor));
 
@@ -18,6 +20,4 @@ router.route("/:id")
     .get(asyncHandler(DoctorController.getDoctor))
     .put(authenticateUser, roleRequired("ADMIN"), validate(ZEditDoctor), asyncHandler(DoctorController.editDoctor))
 
-router.route("/availabl")
-    .get(authenticateUser, asyncHandler(DoctorController.getAvailableDoctors));
 export default router;

@@ -40,15 +40,17 @@ export class DoctorRepository {
     static async getAvailableDoctorsForTime(date: Date, time: string) {
         // time -> HH:MM
         const [hours, minutes] = time.split(":").map(Number);
-        const timeToCompare = new Date(0, 0, 1, hours, minutes, 0); // dummy date, only time matters
+        // const timeToCompare = new Date(0, 0, 1, hours, minutes, 0); // dummy date, only time matters
+        // console.log(timeToCompare);
+        console.log(getDayOfWeekEnum(date));
 
         const availableDoctors = await prisma.doctor.findMany({
             where: {
                 doctorAvailability: {
                     some: {
                         dayOfWeek: getDayOfWeekEnum(date),
-                        availableFrom: { lte: timeToCompare },
-                        availableTo: { gte: timeToCompare },
+                        availableFrom: { lte: time },
+                        availableTo: { gte: time },
                     },
                 },
             },

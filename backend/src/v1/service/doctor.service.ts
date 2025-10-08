@@ -51,10 +51,11 @@ export class DoctorService {
 
     static async getAvailableDoctors(time: string, res: Response) {
         const data = ZAvailableDoctors.safeParse({ time });
+
         if (!data.success) {
             throw new ApiError("The time is not in correct format, it should be in HH:MM.", HTTP_STATUS.BAD_REQUEST);
         }
-
+        
         const availableDoctors = await DoctorRepository.getAvailableDoctorsForTime(new Date(), time);
         if (!availableDoctors) {
             throw new ApiError("Failed to get all the available doctors.");

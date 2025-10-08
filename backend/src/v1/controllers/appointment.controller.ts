@@ -15,7 +15,7 @@ export class AppointmentController {
     }
 
     static async getAppointments(req: Request, res: Response) {
-        const filter = req.query.id as string;
+        const filter = req.query.filter as string;
         await AppointmentService.getAppointments(filter, res);
     }
 }

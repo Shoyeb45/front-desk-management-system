@@ -127,8 +127,8 @@ model DoctorAvailability {
   id            String    @id @default(uuid()) @db.Uuid
   doctorId      String    @map("doctor_id") @db.Uuid
   dayOfWeek     DayOfWeek @map("day_of_week")
-  availableFrom DateTime  @map("available_from") @db.Time(6)
-  availableTo   DateTime  @map("available_to") @db.Time(6)
+  availableFrom String  
+  availableTo   String
   // isEmergency   Boolean   @map("is_emergency") @default(false)
   createdAt     DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt     DateTime  @updatedAt @db.Timestamptz(6)

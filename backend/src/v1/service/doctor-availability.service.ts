@@ -50,8 +50,8 @@ export class DoctorAvailabilityService {
             id: slot.id,
             doctorId: slot.doctorId,
             dayOfWeek: slot.dayOfWeek,
-            availableFrom: slot.availableFrom.toISOString().substr(11, 5), // Extract HH:MM
-            availableTo: slot.availableTo.toISOString().substr(11, 5),
+            availableFrom: slot.availableFrom, // Extract HH:MM
+            availableTo: slot.availableTo,
             createdAt: slot.createdAt,
             updatedAt: slot.updatedAt,
         }));
@@ -75,8 +75,8 @@ export class DoctorAvailabilityService {
         }
 
         if (data.availableFrom || data.availableTo) {
-            const fromTime = data.availableFrom || existingSlot.availableFrom.toISOString().substr(11, 5);
-            const toTime = data.availableTo || existingSlot.availableTo.toISOString().substr(11, 5);
+            const fromTime = data.availableFrom || existingSlot.availableFrom;
+            const toTime = data.availableTo || existingSlot.availableTo;
 
             const from = fromTime.split(':').map(Number);
             const to = toTime.split(':').map(Number);
@@ -94,8 +94,8 @@ export class DoctorAvailabilityService {
             id: updated.id,
             doctorId: updated.doctorId,
             dayOfWeek: updated.dayOfWeek,
-            availableFrom: updated.availableFrom.toISOString().substr(11, 5),
-            availableTo: updated.availableTo.toISOString().substr(11, 5),
+            availableFrom: updated.availableFrom,
+            availableTo: updated.availableTo,
             updatedAt: updated.updatedAt,
         };
 
