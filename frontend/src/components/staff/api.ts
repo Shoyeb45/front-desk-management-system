@@ -2,7 +2,7 @@ import { appConfig } from "@/config";
 import { getToken } from "@/lib/utils";
 import { Employee } from "@/types/adminTypes";
 import { ApiErrorResponse, ApiSuccessReponse } from "@/types/apiTypes";
-import { AppointmentCreate, Patient, QueueCreate, QueueListType, TAppointment, TQueue, UpdateQueueData } from "@/types/staffTypes";
+import { AppointmentCreate, AppointmentStats, Patient, QueueCreate, QueueListType, QueueStats, TAppointment, TQueue, UpdateQueueData } from "@/types/staffTypes";
 
 export async function getUserData(id: string | undefined) {
     if (!id) {
@@ -336,3 +336,61 @@ export async function getAvailableDoctors(time: string) {
 }
 
 
+export async function getQueueStats() {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/patient-queue/stats`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    });
+    
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to get available doctors.: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+    
+    const apiResponse: ApiSuccessReponse<QueueStats> = await response.json();
+    
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+    
+    return apiResponse.data;
+}
+
+export async function getAppointmentStats() {
+    const response = await fetch(`${appConfig.backendUrl}/api/v1/appointment/stats`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+    });
+    
+    if (!response.ok) {
+        let errorData: ApiErrorResponse | null = null;
+        try {
+            errorData = await response.json();
+        } catch(e) {
+            console.error(`Some error occurred`, e);
+        }
+        const errorMessage = errorData?.message || `Failed to get available doctors.: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+    }
+    
+    const apiResponse: ApiSuccessReponse<AppointmentStats> = await response.json();
+    
+    if (!apiResponse.success) {
+        throw new Error(apiResponse.message);
+    }
+    
+    return apiResponse.data;
+
+}

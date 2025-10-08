@@ -1,10 +1,9 @@
+import { endOfToday, startOfToday } from "date-fns";
 import { prisma } from "../../database/prisma";
-import { getTodaysDateAttachedWithTime } from "../../utils/helper";
 import { TCreateAppointment, TEditAppointment } from "../types/appointment.types";
 
 export class AppointmentRepository {
     static async create(data: Omit<TCreateAppointment, "patient">, patientId: string) {
-        data.appointmentDate = getTodaysDateAttachedWithTime(data.appointmentDate);
         return await prisma.appointment.create({
             data: {
                 ...data, patientId
@@ -13,9 +12,6 @@ export class AppointmentRepository {
     }
 
     static async update(id: string, data: TEditAppointment) {
-        if (data.appointmentDate) {
-            data.appointmentDate = getTodaysDateAttachedWithTime(data.appointmentDate);
-        }
         return await prisma.appointment.update({
             where: { id },
             data
@@ -23,9 +19,9 @@ export class AppointmentRepository {
     }
 
     static async isExists(id: string) {
-        return await prisma.appointment.findUnique({ where: { id }, select: { id: true }});
+        return await prisma.appointment.findUnique({ where: { id }, select: { id: true } });
     }
-    
+
     static async deleteById(id: string) {
         return await prisma.appointment.delete({
             where: { id }
@@ -83,5 +79,42 @@ export class AppointmentRepository {
                 appointmentDate: "asc"
             }
         });
+    }
+
+    static async getTodaysStats() {
+        const today = startOfToday(), end = endOfToday();
+
+        const [totalAppointmentsToday, doneCount, confirmedCount, upcomingCount] = await prisma.$transaction([
+            prisma.appointment.count({
+                where: {
+                    appointmentDate: { gte: today, lte: end },
+                }
+            }),
+            prisma.appointment.count({
+                where: {
+                    appointmentDate: { gte: today, lte: end },
+                    status: "DONE"
+                }
+            }),
+            prisma.appointment.count({
+                where: {
+                    appointmentDate: { gte: today, lte: end },
+                    status: "CONFIRMED"
+                }
+            }),
+            prisma.appointment.count({
+                where: {
+                    appointmentDate: { gt: today },
+                    OR: [
+                        { status: "BOOKED" },
+                        { status: "CONFIRMED" },
+                    ]
+                }
+            })
+        ]);
+
+        return {
+            totalAppointmentsToday, doneCount, confirmedCount, upcomingCount
+        };
     }
 }

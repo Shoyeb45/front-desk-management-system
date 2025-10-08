@@ -9,8 +9,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { appConfig } from "@/config";
-import {  ApiSuccessReponse, LoginData } from "@/types/apiTypes";
+import { ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react"; // 👈 Added icons
 
 export const Login = () => {
     const router = useRouter();
@@ -18,6 +19,7 @@ export const Login = () => {
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<"ADMIN" | "STAFF">("STAFF");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false); // 👈 New state
 
     // Auto-redirect if already logged in
     useEffect(() => {
@@ -72,7 +74,7 @@ export const Login = () => {
             localStorage.setItem("token", apiResponse.data.token);
             const user = decodeToken(apiResponse.data.token);
 
-            toast.success(`Welcome back, ${user?.role === "ADMIN" ? "Admin": "Staff"}!`);
+            toast.success(`Welcome back, ${user?.role === "ADMIN" ? "Admin" : "Staff"}!`);
 
             setTimeout(() => {
                 router.push(user?.role === "ADMIN" ? "/admin" : "/staff");
@@ -97,7 +99,6 @@ export const Login = () => {
 
     return (
         <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto p-4 md:p-8">
-            
             <div className="flex-1 flex items-center justify-center p-6 md:p-12">
                 <div className="max-w-md text-center md:text-left">
                     <blockquote className="text-2xl font-medium text-primary mb-6">
@@ -114,7 +115,7 @@ export const Login = () => {
             </div>
 
             <div className="flex-1 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md shadow-lg bg-transparent"     >
+                <Card className="w-full max-w-md shadow-lg bg-transparent">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold text-center">
                             Sign in to your account
@@ -138,17 +139,33 @@ export const Login = () => {
                                 />
                             </div>
 
+                            {/* Password Field with Toggle */}
                             <div className="space-y-2">
                                 <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    disabled={isLoading}
-                                    autoComplete="current-password"
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"} // 👈 Dynamic type
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        disabled={isLoading}
+                                        autoComplete="current-password"
+                                        className="pr-10" // 👈 Make space for icon
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-2">

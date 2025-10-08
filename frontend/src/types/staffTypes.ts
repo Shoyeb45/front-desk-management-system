@@ -57,9 +57,9 @@ export enum AppointmentStatus {
 
 export interface AppointmentCreate {
     patient: Patient,
-    appointmentDate: string,
+    appointmentDate: Date,
     status: AppointmentStatus,
-    doctorId: string 
+    doctorId: string
 }
 
 export interface TAppointment extends Omit<Omit<AppointmentCreate, "patient">, "doctorId"> {
@@ -69,3 +69,17 @@ export interface TAppointment extends Omit<Omit<AppointmentCreate, "patient">, "
     createdAt: Date,
     updatedAt: Date
 }
+
+export interface QueueStats {
+    totalQueueToday: number,
+    completedCount: number,
+    waitingCount: number,
+    emergencyCount: number,
+}
+
+export interface AppointmentStats {
+    totalAppointmentsToday: number,
+    doneCount: number,
+    confirmedCount: number,
+    upcomingCount: number,
+};

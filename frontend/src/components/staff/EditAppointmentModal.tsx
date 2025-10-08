@@ -19,7 +19,7 @@ import {
 import { AppointmentStatus, TAppointment } from "@/types/staffTypes";
 import { updateAppointment, getAvailableDoctors } from "./api";
 import { useEffect, useState } from "react";
-import { getCurrentTime } from "@/lib/utils";
+import { toLocalDateTimeString } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface EditAppointmentModalProps {
@@ -36,7 +36,7 @@ export function EditAppointmentModal({
     onSuccess,
 }: EditAppointmentModalProps) {
     const [formData, setFormData] = useState({
-        appointmentDate: getCurrentTime(),
+        appointmentDate: new Date(),
         status: "" as AppointmentStatus,
         doctorId: "",
     });
@@ -49,22 +49,24 @@ export function EditAppointmentModal({
     // Initialize form when appointment changes
     useEffect(() => {
         if (appointment) {
-            // const date = format(parseISO(appointment.appointmentDate), "yyyy-MM-dd'T'HH:mm");
             setFormData({
-                appointmentDate: getCurrentTime(),
+                appointmentDate: appointment.appointmentDate,
                 status: appointment.status,
                 doctorId: appointment.doctor.id,
             });
 
             // Load available doctors for this time
-            loadAvailableDoctors(getCurrentTime());
+            loadAvailableDoctors(new Date().toISOString());
         }
     }, [appointment]);
 
     const loadAvailableDoctors = async (timeString: string) => {
         try {
-            // const time = timeString.split("T")[1]; // Extract HH:mm
-            const doctors = await getAvailableDoctors(timeString);
+            setError(null);
+
+            const x = timeString.split("T")[1];
+            const time = `${x.split(':')[0]}:${x.split(":")[1]}`;
+            const doctors = await getAvailableDoctors(time);
             setAvailableDoctors(doctors);
         } catch (err) {
             console.error("Failed to load available doctors:", err);
@@ -116,11 +118,18 @@ export function EditAppointmentModal({
                         <Label htmlFor="appointmentDate">Appointment Time</Label>
                         <Input
                             id="appointmentDate"
-                            type="time"
-                            value={formData.appointmentDate}
-                            onChange={(e) =>
-                                setFormData({ ...formData, appointmentDate: e.target.value })
-                            }
+                            type="datetime-local"
+                            value={toLocalDateTimeString(formData.appointmentDate)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "") {
+                                    // Optionally: set to null or ignore
+                                    // But since your state expects Date, better to use a fallback
+                                    setFormData({ ...formData, appointmentDate: new Date() });
+                                } else {
+                                    setFormData({ ...formData, appointmentDate: new Date(value) });
+                                }
+                            }}
                             onBlur={(e) => loadAvailableDoctors(e.target.value)}
                             required
                         />

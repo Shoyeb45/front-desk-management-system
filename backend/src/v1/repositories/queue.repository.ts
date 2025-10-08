@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/prisma";
 import { TCreateQueue, TPatientQueueEdit } from "../types/patient-queue.types";
 import { getTodaysDateAttachedWithTime } from "../../utils/helper";
+import { endOfDay, startOfDay } from "date-fns";
 
 export class QueueRepository {
     static async create(data: TCreateQueue) {
@@ -86,7 +87,7 @@ export class QueueRepository {
 
 
     static async deleteById(id: string) {
-        return await prisma.patientQueue.delete({ where: {id } });
+        return await prisma.patientQueue.delete({ where: { id } });
     }
 
     static async existById(id: string) {
@@ -105,7 +106,7 @@ export class QueueRepository {
         todayStart.setHours(0, 0, 0, 0);
 
         return await prisma.patientQueue.findMany({
-            where: { 
+            where: {
                 currentStatus: "WITH_DOCTOR",
                 createdAt: {
                     gte: todayStart
@@ -115,5 +116,40 @@ export class QueueRepository {
                 id: true
             }
         })
+    }
+
+
+    static async getTodaysStats() {
+        const todayStart = startOfDay(new Date());
+        const todayEnd = endOfDay(new Date());
+
+        const [totalQueueToday, completedCount, waitingCount, emergencyCount] =
+            await prisma.$transaction([
+                prisma.patientQueue.count({
+                    where: { createdAt: { gte: todayStart, lte: todayEnd } },
+                }),
+                prisma.patientQueue.count({
+                    where: {
+                        createdAt: { gte: todayStart, lte: todayEnd },
+                        currentStatus: "DONE",
+                    },
+                }),
+                prisma.patientQueue.count({
+                    where: {
+                        createdAt: { gte: todayStart, lte: todayEnd },
+                        currentStatus: "WAITING",
+                    },
+                }),
+                prisma.patientQueue.count({
+                    where: {
+                        createdAt: { gte: todayStart, lte: todayEnd },
+                        queueType: "EMERGENCY",
+                    },
+                }),
+            ]);
+        
+        return {
+            totalQueueToday, completedCount, waitingCount, emergencyCount
+        };
     }
 }   

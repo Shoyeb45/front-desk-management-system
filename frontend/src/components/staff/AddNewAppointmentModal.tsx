@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Employee, Gender } from "@/types/adminTypes";
-import { getCurrentTime } from "@/lib/utils";
+import { toLocalDateTimeString } from "@/lib/utils";
 import { getFormattedDoctorName } from "@/lib/utils";
 import { createAppointment, getAvailableDoctors, getPatientData } from "./api";
 import { toast } from "sonner";
@@ -33,10 +33,20 @@ export function AddNewAppointmentModal({
         gender: Gender.MALE,
         isNewPatientNeeded: false
     });
-    const [time, setTime] = useState<string>(getCurrentTime());
+    const [appointmentDateTime, setAppointmentDateTime] = useState<Date>(() => {
+        const now = new Date();
+        // Round to next 15 mins for better UX (optional)
+        now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
+        return now;
+    });
+
+    const getTimeString = (date: Date): string => {
+        return date.toTimeString().slice(0, 5); // "14:30"
+    };
+
 
     const [appointmentData, setAppointmentData] = useState<Omit<AppointmentCreate, "patient">>({
-        appointmentDate: getCurrentTime(),
+        appointmentDate: new Date(),
         status: AppointmentStatus.BOOKED,
         doctorId: "",
     });
@@ -48,19 +58,27 @@ export function AddNewAppointmentModal({
     const [existingPatientFound, setExistingPatientFound] = useState<boolean>(false);
     const [isPatientDataEditing, setIsPatientDataEditing] = useState<boolean>(false);
 
-    const fetchAvailableDoctors = useCallback(async (time: string) => {
-        const data = await getAvailableDoctors(time);
-        setDoctors(data);
+    const fetchAvailableDoctors = useCallback(async (timeStr: string) => {
+        try {
+            const data = await getAvailableDoctors(timeStr); // ✅ Now receives "HH:MM"
+            setDoctors(data);
+        } catch (err) {
+            console.error("Failed to fetch available doctors:", err);
+            setDoctors([]);
+            toast.error("Failed to load available doctors");
+        }
     }, []);
 
     useEffect(() => {
-        fetchAvailableDoctors(time);
-    }, [time, fetchAvailableDoctors]);
+        const timeStr = getTimeString(appointmentDateTime);
+        fetchAvailableDoctors(timeStr);
+    }, [appointmentDateTime, fetchAvailableDoctors]);
 
     useEffect(() => {
         if (open) {
-            setTime(getCurrentTime());
-            fetchAvailableDoctors(time);
+            const now = new Date();
+            now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
+            setAppointmentDateTime(now);
             // Reset form when modal opens
             setPatientData({
                 name: "",
@@ -72,7 +90,7 @@ export function AddNewAppointmentModal({
                 isNewPatientNeeded: false
             });
             setAppointmentData({
-                appointmentDate: getCurrentTime(),
+                appointmentDate: new Date(),
                 status: AppointmentStatus.BOOKED,
                 doctorId: ""
             });
@@ -144,13 +162,11 @@ export function AddNewAppointmentModal({
         setIsAdding(true);
         setError(null);
 
-
         try {
             const data = {
                 patient: patientData,
                 ...appointmentData
             };
-            console.table(data);
             await createAppointment(data);
             toast.success("Patient added to the queue.");
             setUpdateList(prev => prev + 1);
@@ -167,7 +183,7 @@ export function AddNewAppointmentModal({
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">
-                        Add Patient to Queue
+                        Add Appointment
                     </DialogTitle>
                     <DialogDescription>
                         Enter patient email to check if they exist, or fill in details to register a new patient.
@@ -318,33 +334,18 @@ export function AddNewAppointmentModal({
                                 <Input
                                     id="arrivalTime"
                                     name="arrivalTime"
-                                    type="time"
-                                    value={appointmentData.appointmentDate}
+                                    type="datetime-local"
+                                    value={toLocalDateTimeString(appointmentData.appointmentDate)}
                                     onChange={e => {
-                                        setAppointmentData({ ...appointmentData, appointmentDate: e.target.value });
-                                        setTime(e.target.value);
+                                        const newDate = new Date(e.target.value);
+                                        if (!isNaN(newDate.getTime())) {
+                                            setAppointmentDateTime(newDate);
+                                        }
                                     }}
                                     required
                                 />
                             </div>
 
-                            {/* <div className="space-y-2">
-                                <Label htmlFor="queueType">Queue Type *</Label>
-                                <Select
-                                    value={queueData.queueType}
-                                    onValueChange={(value: QueueType) => setQueueData({ ...queueData, queueType: value })}
-                                >
-                                    <SelectTrigger id="queueType">
-                                        <SelectValue placeholder="Select type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={QueueType.NORMAL}>Normal</SelectItem>
-                                        <SelectItem value={QueueType.EMERGENCY} className="text-destructive">
-                                            Emergency
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div> */}
 
                             <div className="md:col-span-2 space-y-2">
                                 <Label htmlFor="doctor">Assign Doctor *</Label>
@@ -381,8 +382,8 @@ export function AddNewAppointmentModal({
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isAdding || isCheckingEmail}>
-                            {isAdding ? "Adding..." : "Add to Queue"}
+                        <Button type="submit" disabled={(isAdding || isCheckingEmail) || !(doctors.length > 0) || !(appointmentData.doctorId)}>
+                            {isAdding ? "Adding..." : "Add Appointment"}
                         </Button>
                     </div>
                 </form>
