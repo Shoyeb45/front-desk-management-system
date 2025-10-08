@@ -4,6 +4,7 @@ import authRouter from "./auth.route";
 import doctorRouter from "./doctor.route";
 import doctorAvailabilityRouter from "./doctor-availability.routes";
 import patientQueueRouter from "./patient-queue.route";
+import appointmentRouter from "./appointment.route";
 
 export const router = Router();
 
@@ -12,3 +13,4 @@ router.use("/auth", authRouter);
 router.use("/doctor", doctorRouter);
 router.use("/doctor-availability", doctorAvailabilityRouter);
 router.use("/patient-queue", patientQueueRouter);
+router.use("/appointment", appointmentRouter);

@@ -18,4 +18,6 @@ router.route("/:id")
     .get(asyncHandler(DoctorController.getDoctor))
     .put(authenticateUser, roleRequired("ADMIN"), validate(ZEditDoctor), asyncHandler(DoctorController.editDoctor))
 
+router.route("/availabl")
+    .get(authenticateUser, asyncHandler(DoctorController.getAvailableDoctors));
 export default router;

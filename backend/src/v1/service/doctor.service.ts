@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { TCreateDoctor, TEditDoctor } from "../types/doctor.type";
+import { TCreateDoctor, TEditDoctor, ZAvailableDoctors } from "../types/doctor.type";
 import { DoctorRepository } from "../repositories/doctor.repository";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
@@ -47,5 +47,18 @@ export class DoctorService {
             throw new ApiError("Failed to update the doctor.");
         }
         ApiResponse.success(res, updatedData, "Successfully updated doctor.", HTTP_STATUS.OK);
+    }
+
+    static async getAvailableDoctors(time: string, res: Response) {
+        const data = ZAvailableDoctors.safeParse({ time });
+        if (!data.success) {
+            throw new ApiError("The time is not in correct format, it should be in HH:MM.", HTTP_STATUS.BAD_REQUEST);
+        }
+
+        const availableDoctors = await DoctorRepository.getAvailableDoctorsForTime(new Date(), time);
+        if (!availableDoctors) {
+            throw new ApiError("Failed to get all the available doctors.");
+        }
+        ApiResponse.success(res, availableDoctors, "Successfully fetched all the available doctors.", HTTP_STATUS.OK);
     }
 }

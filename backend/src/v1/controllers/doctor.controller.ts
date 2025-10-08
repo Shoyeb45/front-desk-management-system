@@ -26,4 +26,9 @@ export class DoctorController {
         const id = req.params.id as string;
         await DoctorService.editDoctor(id, req.body, res);
     }
+
+    static async getAvailableDoctors(req: Request, res: Response) {
+        const time = req.query.time as string;
+        await DoctorService.getAvailableDoctors(time, res);
+    }
 }

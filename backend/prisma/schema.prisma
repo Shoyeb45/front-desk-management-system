@@ -143,13 +143,23 @@ model DoctorAvailability {
   @@map("doctor_availability")
 }
 
+
+enum AppointmentStatus {
+  BOOKED
+  CONFIRMED
+  CANCELLED
+  DONE
+  NO_SHOW
+}
+
 model Appointment {
-  id              String   @id @default(uuid()) @db.Uuid
-  doctorId        String   @map("doctor_id") @db.Uuid
-  patientId       String   @map("patient_id") @db.Uuid
-  appointmentDate DateTime @map("appointment_date") @db.Timestamptz(6)
-  createdAt       DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+  id              String             @id @default(uuid()) @db.Uuid
+  doctorId        String             @map("doctor_id") @db.Uuid
+  patientId       String             @map("patient_id") @db.Uuid
+  appointmentDate DateTime           @map("appointment_date") @db.Timestamptz(6)
+  status          AppointmentStatus  @default(BOOKED) 
+  createdAt       DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @db.Timestamptz(6)
 
   // Relations
   doctor  Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
@@ -158,6 +168,7 @@ model Appointment {
   @@index([doctorId])
   @@index([patientId])
   @@index([appointmentDate])
+  @@index([status])
   @@index([doctorId, appointmentDate])
   @@map("appointment")
 }

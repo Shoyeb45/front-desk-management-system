@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config } from "../config/app.config";
+import { ZUuid } from "../v1/types/shared.types";
+import { DayOfWeek } from "@prisma/client";
 
 type JwtPayload = {
   id: string,
@@ -62,3 +64,14 @@ export function getTodaysDateAttachedWithTime(time: string) {
   return combinedDate.toISOString();
 }
 
+
+export function verifyUUID(id: string) {
+  const data = ZUuid.safeParse({ id });
+  if (!data.success) {
+    return null;
+  }
+  return id;
+}
+
+export const getDayOfWeekEnum = (date: Date): DayOfWeek =>
+  ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"][date.getDay()] as DayOfWeek;

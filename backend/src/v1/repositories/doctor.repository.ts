@@ -1,4 +1,5 @@
 import { prisma } from "../../database/prisma";
+import { getDayOfWeekEnum } from "../../utils/helper";
 import { TCreateDoctor, TEditDoctor } from "../types/doctor.type";
 
 export class DoctorRepository {
@@ -6,7 +7,7 @@ export class DoctorRepository {
         return await prisma.doctor.create({
             data
         });
-    } 
+    }
 
     static async getDoctorById(id: string) {
         return prisma.doctor.findUnique({
@@ -15,9 +16,11 @@ export class DoctorRepository {
     }
 
     static async getAllDoctor() {
-        return await prisma.doctor.findMany({select: {
-            id: true, name: true, email: true, specialization: true
-        }});
+        return await prisma.doctor.findMany({
+            select: {
+                id: true, name: true, email: true, specialization: true
+            }
+        });
     }
 
     static async deleteById(id: string) {
@@ -32,4 +35,31 @@ export class DoctorRepository {
             data
         });
     }
+
+
+    static async getAvailableDoctorsForTime(date: Date, time: string) {
+        // time -> HH:MM
+        const [hours, minutes] = time.split(":").map(Number);
+        const timeToCompare = new Date(0, 0, 1, hours, minutes, 0); // dummy date, only time matters
+
+        const availableDoctors = await prisma.doctor.findMany({
+            where: {
+                doctorAvailability: {
+                    some: {
+                        dayOfWeek: getDayOfWeekEnum(date),
+                        availableFrom: { lte: timeToCompare },
+                        availableTo: { gte: timeToCompare },
+                    },
+                },
+            },
+            select: {
+                id: true,
+                name: true,
+                specialization: true
+            }
+        });
+
+        return availableDoctors;
+    }
+
 }
