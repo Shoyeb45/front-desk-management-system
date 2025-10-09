@@ -199,7 +199,7 @@ export function AddNewAppointmentModal({
                                 name="email"
                                 type="email"
                                 value={patientData.email}
-                                onChange={e => handleEmailChange(e.target.value)} // ✅ Reset on change
+                                onChange={e => handleEmailChange(e.target.value)}
                                 placeholder="Enter patient email"
                                 required
                                 className={existingPatientFound ? "border-green-500 bg-green-50" : ""}
@@ -340,6 +340,7 @@ export function AddNewAppointmentModal({
                                         const newDate = new Date(e.target.value);
                                         if (!isNaN(newDate.getTime())) {
                                             setAppointmentDateTime(newDate);
+                                            setAppointmentData({ ...appointmentData, appointmentDate: new Date(e.target.value)});
                                         }
                                     }}
                                     required
