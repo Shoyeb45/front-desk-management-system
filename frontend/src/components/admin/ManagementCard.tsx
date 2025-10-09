@@ -38,7 +38,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
 
     return (
         <div className="space-y-6 w-full">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="min-w-0">
                     <h2 className="text-base sm:text-lg md:text-xl font-semibold capitalize truncate">
@@ -57,7 +56,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                 </Button>
             </div>
 
-            {/* Search */}
             <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -68,10 +66,8 @@ export function ManagementCard({ role }: ManagementCardProps) {
                 />
             </div>
 
-            {/* Doctor Filters */}
             {role === "doctor" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-3 sm:p-4 bg-muted/20 rounded-lg border">
-                    {/* Specialization */}
                     <div className="space-y-1.5">
                         <label className="text-xs sm:text-sm font-medium">Specialization</label>
                         <Select
@@ -92,7 +88,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                         </Select>
                     </div>
 
-                    {/* Location */}
                     <div className="space-y-1.5">
                         <label className="text-xs sm:text-sm font-medium">Location</label>
                         <Select
@@ -113,7 +108,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                         </Select>
                     </div>
 
-                    {/* Availability */}
                     <div className="space-y-1.5">
                         <label className="text-xs sm:text-sm font-medium">Available On</label>
                         <Select
@@ -133,7 +127,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                         </Select>
                     </div>
 
-                    {/* Clear Filters */}
                     <div className="flex items-end">
                         <Button
                             variant="outline"
@@ -148,7 +141,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                 </div>
             )}
 
-            {/* Employee List */}
             <div className="w-full">
                 <EmployeeList
                     role={role}
@@ -160,7 +152,6 @@ export function ManagementCard({ role }: ManagementCardProps) {
                 />
             </div>
 
-            {/* Modal */}
             <AddEmployeeModal
                 role={role}
                 isOpen={isModalOpen}

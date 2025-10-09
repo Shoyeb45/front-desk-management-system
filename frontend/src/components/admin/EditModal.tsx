@@ -40,10 +40,9 @@ export function EditModal({
         gender: Gender.FEMALE,
     });
 
-    // ✅ Only fetch when modal opens AND employee ID is valid
     useEffect(() => {
         if (open && employee.id) {
-            setIsEditing(false); // reset edit mode on open
+            setIsEditing(false); 
             fetchUserDetail(role, employee.id)
                 .then((data) => {
                     if (data) {
@@ -62,7 +61,7 @@ export function EditModal({
                     toast.error("Failed to load user data");
                 });
         }
-    }, [open, role, employee.id]); // ✅ depend on `open`
+    }, [open, role, employee.id]); 
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (!isEditing) return;
@@ -81,7 +80,7 @@ export function EditModal({
             const data = await editEmployee(role, employee.id, formData);
             toast.success(`Successfully edited ${data?.name}.`);
             onEmployeeEdited?.();
-            onOpenChange(false); // close modal after success
+            onOpenChange(false); 
         } catch (error) {
             console.error("Failed to edit employee:", error);
             toast.error(`Failed to edit ${role}`);
@@ -112,7 +111,6 @@ export function EditModal({
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                    {/* Name */}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="name" className="text-right">
                             Name
@@ -127,7 +125,6 @@ export function EditModal({
                         />
                     </div>
 
-                    {/* Email */}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="email" className="text-right">
                             Email
@@ -143,7 +140,6 @@ export function EditModal({
                         />
                     </div>
 
-                    {/* Doctor-specific fields */}
                     {role === "doctor" && (
                         <>
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -172,7 +168,6 @@ export function EditModal({
                         </>
                     )}
 
-                    {/* Gender */}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="gender" className="text-right">
                             Gender

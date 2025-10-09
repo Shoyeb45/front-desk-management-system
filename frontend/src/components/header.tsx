@@ -19,7 +19,6 @@ export function Header() {
     return (
         <header className="bg-background-secondary border-b border-border px-4 sm:px-6 py-3">
             <div className="flex justify-between items-center">
-                {/* Logo */}
                 <div className="flex items-center gap-2.5">
                     <div className="p-2 bg-primary/10 rounded-lg">
                         <Stethoscope className="h-5 w-5 text-primary" />
@@ -29,7 +28,6 @@ export function Header() {
                     </h1>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center gap-2">
                     <ThemeToggle />
                     <Button

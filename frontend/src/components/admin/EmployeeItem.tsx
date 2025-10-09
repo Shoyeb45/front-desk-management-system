@@ -1,4 +1,3 @@
-// EmployeeItem.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +24,7 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
     return (
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
-                {/* Main content: flex column on mobile, row on larger screens */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    {/* Left: Avatar + Info */}
                     <div className="flex items-center space-x-4">
                         <Avatar className="h-12 w-12 flex-shrink-0">
                             <AvatarImage
@@ -47,7 +44,6 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                         </div>
                     </div>
 
-                    {/* Right: Badge + Menu */}
                     <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                         <Badge
                             variant={role === "doctor" ? "default" : "secondary"}
@@ -97,7 +93,6 @@ export function EmployeeItem({ employee, role, onEmployeeDeleted }: EmployeeItem
                     </div>
                 </div>
 
-                {/* Modals */}
                 <UserDeleteModal
                     isDeleteDialogOpen={isDeleteDialogOpen}
                     setIsDeleteDialogOpen={setIsDeleteDialogOpen}

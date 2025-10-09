@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { appConfig } from "@/config";
 import { ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react"; // 👈 Added icons
+import { Eye, EyeOff } from "lucide-react"; 
 
 export const Login = () => {
     const router = useRouter();
@@ -19,9 +19,8 @@ export const Login = () => {
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<"ADMIN" | "STAFF">("STAFF");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false); // 👈 New state
+    const [showPassword, setShowPassword] = useState<boolean>(false); 
 
-    // Auto-redirect if already logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -55,7 +54,7 @@ export const Login = () => {
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({ email, password, role }),
-                signal: AbortSignal.timeout(10000),
+                signal: AbortSignal.timeout(15000),
             });
 
             const apiResponse: ApiSuccessReponse<LoginData> = await response.json();
@@ -128,7 +127,7 @@ export const Login = () => {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="name@clinic.com"
+                                    placeholder="Example: admin1@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled={isLoading}
@@ -136,19 +135,18 @@ export const Login = () => {
                                 />
                             </div>
 
-                            {/* Password Field with Toggle */}
                             <div className="space-y-2">
                                 <Label htmlFor="password">Password</Label>
                                 <div className="relative">
                                     <Input
                                         id="password"
-                                        type={showPassword ? "text" : "password"} // 👈 Dynamic type
-                                        placeholder="••••••••"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Example: 12345678"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         disabled={isLoading}
                                         autoComplete="current-password"
-                                        className="pr-10" // 👈 Make space for icon
+                                        className="pr-10" 
                                     />
                                     <button
                                         type="button"
