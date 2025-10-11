@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { appConfig } from "@/config";
 import { ApiSuccessReponse, LoginData } from "@/types/apiTypes";
 import { decodeToken } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react"; 
+import { Eye, EyeOff } from "lucide-react";
 
 export const Login = () => {
     const router = useRouter();
@@ -19,7 +19,7 @@ export const Login = () => {
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<"ADMIN" | "STAFF">("STAFF");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false); 
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -97,7 +97,8 @@ export const Login = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto p-4 md:p-8">
+        <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto p-4 md:p-8 min-h-screen">
+            {/* Left Quote Section */}
             <div className="flex-1 flex items-center justify-center p-6 md:p-12">
                 <div className="max-w-md text-center md:text-left">
                     <blockquote className="text-2xl font-medium text-primary mb-6">
@@ -110,8 +111,8 @@ export const Login = () => {
                 </div>
             </div>
 
-            <div className="flex-1 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md shadow-lg bg-transparent">
+            <div className="flex-1 flex flex-col items-center justify-center p-4">
+                <Card className="w-full max-w-md shadow-lg">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold text-center">
                             Sign in to your account
@@ -141,12 +142,12 @@ export const Login = () => {
                                     <Input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Example: 12345678"
+                                        placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         disabled={isLoading}
                                         autoComplete="current-password"
-                                        className="pr-10" 
+                                        className="pr-10"
                                     />
                                     <button
                                         type="button"
@@ -198,6 +199,22 @@ export const Login = () => {
                         </form>
                     </CardContent>
                 </Card>
+
+                <div className="mt-6 w-full max-w-md text-xs text-muted-foreground space-y-2">
+                    <p className="text-center font-medium">Sample Credentials</p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <div className="text-center">
+                            <p className="font-medium text-primary">Admin</p>
+                            <p>Email: admin1@gmail.com</p>
+                            <p>Password: 12345678</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="font-medium text-primary">Staff</p>
+                            <p>Email: staff1@gmail.com</p>
+                            <p>Password: 12345</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
